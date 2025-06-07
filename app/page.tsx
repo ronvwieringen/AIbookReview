@@ -53,7 +53,7 @@ export default function Home() {
               <Link href="#features" className="text-gray-600 hover:text-[#F79B72]">
                 Features
               </Link>
-              <Link href="#for-authors" className="text-gray-600 hover:text-[#F79B72]">
+              <Link href="/authors" className="text-gray-600 hover:text-[#F79B72]">
                 For Authors
               </Link>
               <Link href="/reviews" className="text-gray-600 hover:text-[#F79B72]">
