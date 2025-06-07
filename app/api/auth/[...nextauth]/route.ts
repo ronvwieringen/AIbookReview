@@ -63,10 +63,9 @@ const authOptions: NextAuthOptions = {
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
   secret: process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production",
+  debug: false, // Disable debug mode to reduce console noise
 };
 
 const handler = NextAuth(authOptions);
 
 export { handler as GET, handler as POST };
-
-export { authOptions }

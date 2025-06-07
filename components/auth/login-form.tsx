@@ -50,9 +50,11 @@ export function LoginForm() {
         return;
       }
 
-      // Redirect based on user role
-      router.push("/");
-      router.refresh();
+      if (result?.ok) {
+        // Redirect based on user role or to home page
+        router.push("/");
+        router.refresh();
+      }
     } catch (error) {
       setError("An unexpected error occurred. Please try again.");
       console.error("Login error:", error);
