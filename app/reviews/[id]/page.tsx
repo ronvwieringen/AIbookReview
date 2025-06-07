@@ -53,19 +53,20 @@ import ReaderReviews from "@/components/reader-reviews"
 import AuthorResponse from "@/components/author-response"
 
 interface PageProps {
-  params: {
+  params: Promise<{
     id: string
-  }
+  }>
 }
 
-export default function ReviewPresentationPage({ params }: PageProps) {
-  const review = mockReviews.find((r) => r.id === params.id)
+export default async function ReviewPresentationPage({ params }: PageProps) {
+  const { id } = await params
+  const review = mockReviews.find((r) => r.id === id)
 
   if (!review) {
     notFound()
   }
 
-  const fullReviewData = getFullReviewData(params.id)
+  const fullReviewData = getFullReviewData(id)
 
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, i) => (
