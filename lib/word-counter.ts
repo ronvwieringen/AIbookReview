@@ -1,6 +1,6 @@
 /**
  * Word counting utilities for manuscript files
- * Supports PDF, DOCX, TXT, and MD files
+ * Supports PDF, DOCX, TXT, and MD files with proper text extraction
  */
 
 // Simple word counting for text content
@@ -9,12 +9,13 @@ export function countWords(text: string): number {
     return 0;
   }
   
-  // Remove extra whitespace and split by whitespace
+  // Remove extra whitespace, newlines, and split by whitespace
   const words = text
     .trim()
-    .replace(/\s+/g, ' ') // Replace multiple spaces with single space
+    .replace(/\s+/g, ' ') // Replace multiple spaces/newlines with single space
+    .replace(/[^\w\s'-]/g, ' ') // Replace punctuation with spaces (keep apostrophes and hyphens)
     .split(' ')
-    .filter(word => word.length > 0);
+    .filter(word => word.trim().length > 0 && /\w/.test(word)); // Filter out empty strings and non-word characters
   
   return words.length;
 }
@@ -29,13 +30,12 @@ export async function extractTextFromFile(file: File): Promise<string> {
       // Handle plain text and markdown files
       return await file.text();
     } else if (fileType === 'application/pdf' || fileName.endsWith('.pdf')) {
-      // For PDF files, we'll need a simple text extraction
-      // Note: This is a basic implementation. For production, consider using pdf-parse or similar
+      // For PDF files, use pdf-parse library
       const arrayBuffer = await file.arrayBuffer();
       const text = await extractTextFromPDF(arrayBuffer);
       return text;
     } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' || fileName.endsWith('.docx')) {
-      // For DOCX files, we'll extract text content
+      // For DOCX files, use mammoth library
       const arrayBuffer = await file.arrayBuffer();
       const text = await extractTextFromDOCX(arrayBuffer);
       return text;
@@ -48,41 +48,77 @@ export async function extractTextFromFile(file: File): Promise<string> {
   }
 }
 
-// Basic PDF text extraction (simplified)
+// PDF text extraction using pdf-parse
 async function extractTextFromPDF(arrayBuffer: ArrayBuffer): Promise<string> {
-  // This is a very basic PDF text extraction
-  // In a real application, you'd want to use a proper PDF parsing library
+  try {
+    // Dynamic import to avoid SSR issues
+    const pdfParse = (await import('pdf-parse')).default;
+    const buffer = Buffer.from(arrayBuffer);
+    const data = await pdfParse(buffer);
+    return data.text || '';
+  } catch (error) {
+    console.error('Error parsing PDF:', error);
+    // Fallback to basic extraction if pdf-parse fails
+    return extractTextFromPDFBasic(arrayBuffer);
+  }
+}
+
+// Basic PDF text extraction fallback
+function extractTextFromPDFBasic(arrayBuffer: ArrayBuffer): string {
   const uint8Array = new Uint8Array(arrayBuffer);
-  const text = new TextDecoder('utf-8').decode(uint8Array);
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(uint8Array);
   
-  // Very basic text extraction - look for text between parentheses and brackets
-  // This is not comprehensive but will work for simple PDFs
+  // Look for text patterns in PDF
   const textMatches = text.match(/\((.*?)\)/g) || [];
   const extractedText = textMatches
-    .map(match => match.slice(1, -1)) // Remove parentheses
+    .map(match => match.slice(1, -1))
+    .filter(text => text.length > 0 && /[a-zA-Z]/.test(text))
     .join(' ');
   
-  // If no text found with basic method, try to extract readable characters
   if (extractedText.length < 50) {
-    const readableText = text.replace(/[^\x20-\x7E]/g, ' ').replace(/\s+/g, ' ').trim();
+    // Try to extract readable ASCII characters
+    const readableText = text
+      .replace(/[^\x20-\x7E\n\r\t]/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     return readableText.length > extractedText.length ? readableText : extractedText;
   }
   
   return extractedText;
 }
 
-// Basic DOCX text extraction (simplified)
+// DOCX text extraction using mammoth
 async function extractTextFromDOCX(arrayBuffer: ArrayBuffer): Promise<string> {
-  // This is a very basic DOCX text extraction
-  // In a real application, you'd want to use a proper DOCX parsing library like mammoth.js
+  try {
+    // Dynamic import to avoid SSR issues
+    const mammoth = await import('mammoth');
+    const buffer = Buffer.from(arrayBuffer);
+    const result = await mammoth.extractRawText({ buffer });
+    return result.value || '';
+  } catch (error) {
+    console.error('Error parsing DOCX:', error);
+    // Fallback to basic extraction if mammoth fails
+    return extractTextFromDOCXBasic(arrayBuffer);
+  }
+}
+
+// Basic DOCX text extraction fallback
+function extractTextFromDOCXBasic(arrayBuffer: ArrayBuffer): string {
   const uint8Array = new Uint8Array(arrayBuffer);
-  const text = new TextDecoder('utf-8').decode(uint8Array);
+  const text = new TextDecoder('utf-8', { fatal: false }).decode(uint8Array);
   
-  // Look for XML text content patterns common in DOCX files
+  // Look for XML text content patterns in DOCX
   const xmlTextMatches = text.match(/>([^<]+)</g) || [];
   const extractedText = xmlTextMatches
-    .map(match => match.slice(1, -1)) // Remove > and <
-    .filter(text => text.trim().length > 0 && !text.match(/^[0-9\s]*$/)) // Filter out numbers and whitespace
+    .map(match => match.slice(1, -1))
+    .filter(text => {
+      const trimmed = text.trim();
+      return trimmed.length > 2 && 
+             /[a-zA-Z]/.test(trimmed) && 
+             !trimmed.match(/^[0-9\s\-_\.]+$/) &&
+             !trimmed.includes('xml') &&
+             !trimmed.includes('http');
+    })
     .join(' ');
   
   return extractedText;
