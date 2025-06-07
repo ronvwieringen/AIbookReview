@@ -17,7 +17,9 @@ export async function middleware(request: NextRequest) {
     
     const isAuthenticated = !!token;
     const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
-    const isAuthorRoute = request.nextUrl.pathname.startsWith('/author');
+    const isAuthorDashboardRoute = request.nextUrl.pathname === '/author/dashboard' || 
+                                   request.nextUrl.pathname === '/author/profile' ||
+                                   request.nextUrl.pathname.startsWith('/author/reviews');
     const isApiRoute = request.nextUrl.pathname.startsWith('/api');
 
     // Allow seed endpoint in development
@@ -32,8 +34,8 @@ export async function middleware(request: NextRequest) {
       }
     }
 
-    // Protect author routes
-    if (isAuthorRoute) {
+    // Protect only specific author routes (dashboard, profile, reviews management)
+    if (isAuthorDashboardRoute) {
       if (!isAuthenticated) {
         return NextResponse.redirect(new URL('/login', request.url));
       }
@@ -47,8 +49,9 @@ export async function middleware(request: NextRequest) {
     if (isApiRoute && !request.nextUrl.pathname.startsWith('/api/auth')) {
       // Allow public API routes
       if (
-        request.nextUrl.pathname.startsWith('/api/books') && 
-        request.method === 'GET'
+        (request.nextUrl.pathname.startsWith('/api/books') && request.method === 'GET') ||
+        (request.nextUrl.pathname.startsWith('/api/genres') && request.method === 'GET') ||
+        (request.nextUrl.pathname.startsWith('/api/languages') && request.method === 'GET')
       ) {
         return NextResponse.next();
       }
@@ -73,13 +76,10 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    '/((?!_next/static|_next/image|favicon.ico|public/).*)',
+    '/admin/:path*',
+    '/author/dashboard',
+    '/author/profile',
+    '/author/reviews/:path*',
+    '/api/:path*',
   ],
 };

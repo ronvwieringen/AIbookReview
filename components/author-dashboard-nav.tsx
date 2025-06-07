@@ -20,11 +20,16 @@
  * - Profile access and management
  */
 
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { BookOpen, User, MessageSquare, Bell } from "lucide-react"
+import { useSession } from "next-auth/react"
 
 export default function AuthorDashboardNav() {
+  const { data: session } = useSession()
+
   return (
     <header className="border-b bg-white sticky top-0 z-50">
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
@@ -37,27 +42,44 @@ export default function AuthorDashboardNav() {
           <Link href="/author/dashboard" className="text-gray-600 hover:text-[#F79B72]">
             Dashboard
           </Link>
-          <Link href="/author/reviews" className="text-[#F79B72] font-semibold">
-            My Reviews
+          <Link href="/author/upload" className="text-gray-600 hover:text-[#F79B72]">
+            Upload
           </Link>
           <Link href="/author/profile" className="text-gray-600 hover:text-[#F79B72]">
             Profile
           </Link>
-          <Link href="/author/services" className="text-gray-600 hover:text-[#F79B72]">
-            Find Services
+          <Link href="/reviews" className="text-gray-600 hover:text-[#F79B72]">
+            Browse Books
           </Link>
         </nav>
 
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" size="sm">
-            <MessageSquare className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <Bell className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="sm">
-            <User className="h-4 w-4" />
-          </Button>
+          {session ? (
+            <>
+              <Button variant="ghost" size="sm">
+                <MessageSquare className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <Bell className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm">
+                <User className="h-4 w-4" />
+              </Button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                <Button variant="outline" className="border-[#2A4759] text-[#2A4759] hover:bg-[#2A4759] hover:text-white">
+                  Log In
+                </Button>
+              </Link>
+              <Link href="/register">
+                <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white">
+                  Register
+                </Button>
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </header>
