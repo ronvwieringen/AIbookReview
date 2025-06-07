@@ -7,14 +7,9 @@ export async function middleware(request: NextRequest) {
   const isAuthorDashboard = request.nextUrl.pathname === '/author/dashboard';
   const isAuthorProfile = request.nextUrl.pathname === '/author/profile';
   const isAuthorReviews = request.nextUrl.pathname.startsWith('/author/reviews');
-  const isProtectedApiRoute = request.nextUrl.pathname.startsWith('/api') && 
-    !request.nextUrl.pathname.startsWith('/api/auth') &&
-    !request.nextUrl.pathname.startsWith('/api/books') &&
-    !request.nextUrl.pathname.startsWith('/api/genres') &&
-    !request.nextUrl.pathname.startsWith('/api/languages');
 
   // Skip middleware for public routes
-  if (!isAdminRoute && !isAuthorDashboard && !isAuthorProfile && !isAuthorReviews && !isProtectedApiRoute) {
+  if (!isAdminRoute && !isAuthorDashboard && !isAuthorProfile && !isAuthorReviews) {
     return NextResponse.next();
   }
 
@@ -30,6 +25,5 @@ export const config = {
     '/author/dashboard',
     '/author/profile',
     '/author/reviews/:path*',
-    '/api/:path*',
   ],
 };
