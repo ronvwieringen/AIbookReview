@@ -162,32 +162,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         </CardContent>
       </Card>
 
-      {/* Language Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-[#2A4759]">Manuscript Language</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <Label htmlFor="language-select">Select the primary language of your manuscript</Label>
-            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-              <SelectTrigger id="language-select">
-                <SelectValue placeholder="Choose language..." />
-              </SelectTrigger>
-              <SelectContent>
-                {supportedLanguages.map((lang) => (
-                  <SelectItem key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-gray-500">
-              This helps our AI provide more accurate analysis and feedback in the appropriate language.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+      
 
       {/* File Information */}
       {selectedFile && (
