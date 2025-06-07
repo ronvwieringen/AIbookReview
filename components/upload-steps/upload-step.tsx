@@ -201,7 +201,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
       )}
 
       {/* Action Buttons */}
-      <div className="flex justify-end">
+      <div className="flex justify-center">
         <Button
           onClick={handleUpload}
           disabled={!selectedFile || !selectedLanguage || isProcessing}
