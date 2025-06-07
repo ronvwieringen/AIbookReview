@@ -186,7 +186,7 @@ export default function Home() {
                   "Secure handling of your intellectual property",
                 ]}
                 bgColor="bg-[#2A4759]"
-                ctaText="See authors benefits"
+                ctaText="See benefits"
                 ctaLink="/authors"
               />
               <UserTypeValue
