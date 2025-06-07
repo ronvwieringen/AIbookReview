@@ -1,0 +1,19 @@
+fastapi
+uvicorn[standard]
+python-multipart
+
+# Database
+sqlalchemy
+mysql-connector-python
+pydantic[email]
+pydantic-settings
+
+# Security
+python-jose[cryptography]
+passlib[bcrypt]
+
+# Google Gemini
+google-generativeai
+
+# For .env file loading (handled by pydantic-settings, but good to be aware)
+# python-dotenv

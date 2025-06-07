@@ -1,0 +1,1317 @@
+Business Case
+Business Case: AIbookReview.com, a SaaS Platform that Connects Self-Publishers, Publishers, and Readers
+1. Executive Summary
+• Brief Description of the Concept: A central, potentially international and multilingual platform for the self-publishing community. The quality of manuscripts is objectively assessed (AI analysis platform that generates a detailed review, a plagiarism check, and a concise, citable promotional blurb, reader reviews, author’s process checklist). The AI analysis can also signal the need for specific professional services. Manuscripts are not permanently stored by AIbookReview.com after analysis to ensure the author’s security and intellectual property. The platform offers transparency about the creation process and connects authors, readers, (international) self-publishing platforms (such as MijnBestseller, Brave New Books, Pumbo, Boekengilde, Bookmundo in NL; Amazon KDP, IngramSpark, Lulu internationally) and relevant service providers.
+
+• What Problem Does It Solve? Addresses the image problem of self-publishing (also internationally), reduces uncertainty for readers, facilitates discovery, interaction, and talent scouting, offers a marketplace/showcase for authors and service providers, helps authors to improve the quality of their work in a targeted way, and helps ensure the integrity of the offerings through plagiarism detection – all while respecting the author’s ownership.
+
+• Who is the Target Audience?
+1. Readers/book buyers (worldwide), looking for high-quality books and looking for objective, un-biased judgement of the quality.
+2. Self-publishing authors (national and international) looking for clients and readers.
+3. Self-publishing platforms/publishers (e.g., NL: MijnBestseller, Brave New Books, Pumbo, Boekscout, Gigaboek, Coppelaar, Boekengilde, Bookmundo; International: Amazon KDP, IngramSpark, Lulu).
+4. Service providers in the book industry (editors, designers, coaches, illustrators, etc., potentially international).
+5. Book bloggers, reviewers, (literary agents) (international).
+
+• What is the Unique Value Proposition? A multilingual ecosystem for self-publishing that combines quality transparency (via an AI analysis platform that also signals service needs, detects plagiarism, and generates a promotional blurb, reader reviews, and detailed process checklists), community, and targeted tools for all key stakeholders, with a strong focus on the security of author manuscripts and potential for global impact.
+
+• What are the Expected Results/Objectives? (To be filled in, e.g., number of users (authors, readers, service providers), number of assessed manuscripts, conversion rates, revenue per income stream, number of active partnerships, market share in the self-pub quality segment, customer satisfaction scores.)
+2. Problem Statement
+The publishing industry is undergoing an enormous transition, which also affects the interests of authors and other providers. The publishing paradigm is under pressure, and at the same time, there is criticism of the high-profit margins that traditional publishers pass on per book. Due to far-reaching automation of the publishing process, self-publishing is becoming increasingly attractive to authors, or so it seems. It appears as if the costs a publisher charges for editing, printing, distribution, and marketing are exorbitant compared to the work the author does. However, authors underestimate the added value of publishers, especially regarding quality assurance. The consequence for self-publishing is twofold:
+• due to the lack of quality control by a traditional publisher, a relatively large amount of poor-quality work appears in the self-publishing segment.
+
+• authors are not good at marketing and do not know how to reach their readers.
+This also affects readers: as soon as they see that a book is from a self-publisher, they assume that quality control has been skipped and that the book will therefore be bad. As a result, they miss out on high-quality works that are also available.
+Other problems in self-publishing include: fragmentation of the community, inefficient talent scouting, difficulty in finding/being found by service providers, and a lack of transparency about the manuscript creation process.
+3. Proposed Solution: The AIbookReview.com Platform
+The proposed solution is a web-based platform where authors, self-publishing platforms, and readers meet. The Unique Selling Point of the AIbookReview.com platform is the central role of A.I. It acts as an independent and uninfluenceable arbiter, feedback provider, and quality assessor for manuscripts.
+The customer journey for an author is typically as follows:
+1. The author creates an account at AIbookReview.com or on a self-publishing platform.
+
+2. The author submits their manuscript (this is for a one-time analysis; the file itself is deleted by AIbookReview.com afterwards).
+
+3. AIbookReview.com performs a thorough analysis of the work, provides a score, detailed feedback, a concise promotional blurb, and may signal the need for specific professional services (e.g., editing, design).
+
+4. The author decides to (a) accept the publication including the review/blurb and proceed to publication (possibly after engaging suggested services), or (b) revise their manuscript and resubmit it (i.e., back to step 2), or (c) proceed to publication and add a response to the critique.
+
+5. If the author decides to publish, they arrange this on our partner’s self-publishing platform.
+
+6. The author (or an automatic link from our partner’s self-publishing platform, via our API) adds a list of links in AIbookReview.com to where the book can be purchased. The AI-generated blurb can be made available to partner platforms via API.
+
+7. Our partner’s self-publishing platform makes the book available for sale on various websites and includes a link to the landing page with information about the book and its author and can quote the AIbookReview.com AI blurb.
+The customer journey for a reader is as follows:
+1. A reader finds a book in a regular online bookstore and sees that it is a self-published book. Instead of being deterred, they now see an AIbookReview.com link and/or a short AI-generated quality blurb from AIbookReview.com.
+
+2. The reader clicks on the AIbookReview.com link and lands on the book review page on AIbookReview.com.
+
+3. Alternatively: the reader browses AIbookReview.com (“new books”) or follows suggestions based on their personal profile and finds a book. They then also view the book review page.
+
+4. Alternatively: the reader follows a link on social media or in an advertisement and arrives at the book review page on AIbookReview.com.
+
+5. In all these cases: They see the reviews (AI review, AI blurb, reader reviews) on the book review page and decide to buy the book. To do this, they follow the link that was added by the self-publishing platform (automatically) or by the author. Multiple links may be present for various sales channels.
+
+• Core Functionalities:
+– For Authors:
+• Manuscript Upload & Analysis Process: The author uploads a manuscript for analysis (platform supports multiple languages). AIbookReview.com performs the AI assessment, including a plagiarism detection scan (possibly via integration with specialized tools). After completion of the analysis and presentation of the results to the author (including a detailed review, plagiarism report, and a concise, citable promotional blurb of approx. 25 words), the uploaded manuscript file is permanently deleted from the AIbookReview.com servers. Only anonymized metadata and the AI-generated review text/scores/blurb/plagiarism indication are stored (with permission). The AI analysis includes signaling the possible need for specific professional services (layout, copy editing, writing coaching, illustrations, etc.) with potential referral to service providers on the platform.
+
+• Details of AI Assessment:
+– Plagiarism Detection: Comparison of the manuscript with an extensive database of existing works to identify significant similarities. Reporting of findings to the author.
+
+– Classification: Is the work primarily non-fiction, fiction, or a hybrid form?
+
+– Focus Areas for Novels (Fiction and Hybrid Forms):
+• Language & Style: Correctness: Grammar, spelling, punctuation. Word Choice: Appropriate to character voice, context, and overall tone; precision and effectiveness of vocabulary. Style & Clarity: Clarity, accessibility, and engagement of the prose; avoidance of clichés, unnecessary complexity, and “purple prose.” Character Voice: Clear differentiation and consistency in the voices of different characters. Literary Devices: Purposeful and effective use of metaphors, similes, rhythm, etc., to enhance meaning or emotion. Originality assessment.
+
+• Sensory Experience & Immersion: Richness of Detail: Integration of diverse sensory details (sight, sound, smell, touch, taste) to immerse the reader in the world. Showing Emotion: Portrayal of character emotions through physical reactions, body language, tone of voice (in dialogue), actions, and internal physical sensations, rather than merely naming the emotion. Internal World: Exploration of characters’ inner worlds – thoughts, memories, interpretations, worries, plans – to reveal motivation and depth.
+
+• Scene Construction & Dynamics: Setting & Atmosphere: Creation of a vivid impression of place (setting, scale, objects) and time (movement, change, pacing). Dynamics: Integration of movement, character actions, interactions with the environment, and environmental changes to keep scenes lively and reveal character/plot. Scene Structure: Effective construction of scenes with an engaging opening, a clear central purpose or action, and a compelling ending (hooks, twists, meaningful moments). Pacing: Control of tempo within scenes and throughout the story.
+
+• Plot, Structure & Meaning (Interpretation): Logic & Believability: Strong chain of cause and effect; actions lead to logical and meaningful consequences. Motivation: Clear link between character actions and their established desires, needs, fears, or beliefs. Avoidance of Deus Ex Machina: Solutions to conflicts arise organically from character actions or previously established plot elements. Tension Building: Effective use of anticipation, foreshadowing, dramatic irony, and uncertainty. Central Question/Goal (“Core Want”): Clear and compelling goal for the protagonist(s) and key characters. Conflict: Effective internal and external conflict; presence of meaningful obstacles and opposing forces. Plot Structure: Analysis of the overall story structure (e.g., three-act structure, hero’s journey), including the placement and effectiveness of key turning points. Climax: A satisfying climax that resolves the central conflict, has high stakes, and requires decisive action from the protagonist. Subplots & Transitions: Effective management of any parallel storylines and smooth, meaningful transitions between scenes/chapters.
+
+• Character Development & Depth: Complexity & Psychological Depth: Portrayal of layered characters with internal contradictions, flaws, and believable motivations, beyond stereotypes; exploration of “gray areas.” Character Arc: Clear and believable character development (or deliberate absence thereof), driven by plot events and confrontations, and psychologically consistent. Consequences: Character actions have meaningful consequences for themselves and the world around them. Relatability & Humanity: Integration of everyday details, quirks, and human vulnerabilities to make characters recognizable and grounded.
+
+– Focus Areas for Non-Fiction (and Hybrid Forms):
+• Substantiation of Claims/Content: Foundation: Quality of supporting evidence (research, experience, theories, consensus, anecdotes). Level and Target Audience: Intellectual level and suitability for the intended reader (academic, professional, general). Persuasiveness: Clarity, logic, and persuasiveness of arguments, concepts, or advice. Effectiveness of any narrative elements in conveying the non-fiction message. Enhanced focus on originality and source citation.
+
+• Completeness: Coverage of core aspects of the topic within the stated scope.
+
+• Depth: Does the work offer sufficient insight and go beyond superficial or commonly known information?
+
+• Weaknesses/Limitations: Identification of possible weaknesses such as oversimplification, bias, outdated information, practical implementation challenges, or limited scope.
+
+• Originality & Uniqueness: Degree to which the approach, methodology, model/theory, or presentation style is unique and original within the field or genre. Does it offer a fresh perspective or new contribution?
+
+• (Optional for AI review): Formulation of a few critical questions about the content of the work and simulated author responses to analyze credibility and impact more deeply.
+
+– Generation of Promotional Blurb: Based on the full analysis, the AI generates a concise (max. 25 words), catchy, and objective blurb that reflects the essence and/or unique value of the manuscript, suitable for citation on external platforms.
+
+• Response to AI assessment, written by the author, allowing them to nuance or adjust the AI’s comments for potential buyers.
+
+• Comprehensive author profiles.
+
+• Quality & Creation Process Checklist (per book/author): Option to check off steps taken, visible to readers:
+– Professional Services Engaged: Professional editor hired? Writing coach used? Beta readers engaged? Professional designer (cover)? Professional designer (interior)? ISBN present? Membership in a professional organization? Relevant writing training completed? Fact-checking (for non-fiction)?
+
+– Use of AI Tools by Author (transparency): AI in Preparation Phase (Ideas/Brainstorming, Research, Outline/Structure). AI in Writing Phase (Text Generation: Generating First Draft (parts/whole), Rewriting/Paraphrasing). AI in Editing Phase (Grammar/Spelling, Style/Readability, Plot/Structure Feedback, Character Consistency, Dialogue Improvement, Continuity Check, Originality/Plagiarism Check). AI for Other Support (Generating Summary/Synopsis, Translation). (Optional: brief explanation by author per AI usage category)
+
+• Interaction with readers and service providers.
+
+• Dashboard with statistics.
+
+• Sharing of excerpts/bonus material.
+
+• Integration/linking with (international) self-publishing platforms.
+
+• Direct submission option to affiliated self-publishing platforms.
+
+• (Optional) Networking opportunities.
+
+– For Readers:
+• Advanced search function (by genre, author, title, score, language, etc.).
+
+• Access to AI score (platform), AI-generated blurb, author’s response, reader reviews, and full Quality & Creation Process Checklist (incl. author’s AI use). Possible indication of originality check.
+
+• Reader reviews and ratings (ideally linked to verified purchase).
+
+• Creation of a reader profile (preferences, reading history).
+
+• Personalized book recommendations.
+
+• Following favorite authors and possibly bloggers/reviewers (notifications).
+
+• Creation of reading lists/bookshelves (to read, read, favorites).
+
+• Purchase options (direct or via referral).
+
+• Participation in discussion forums/groups (per genre, theme, book/author).
+
+• Participation in Q&A sessions with authors.
+
+• Badges/Gamification for active participation.
+
+• Sharing on social media.
+
+– For Self-Publishing Platforms (e.g., NL: MijnBestseller, Bookmundo, etc.; International: Amazon KDP, IngramSpark, Lulu, etc.):
+• Talent Scouting Dashboard (filtering by AI score platform, reviews, genre, language, process checklist, plagiarism indication, etc.).
+
+• Streamlined Manuscript Intake (incl. AI score platform, reviews, process checklist, plagiarism indication).
+
+• Publisher profiles (to indicate what kind of manuscripts they are looking for, services, success stories).
+
+• Market insights & Trend reports (premium, potentially per region/language).
+
+• Promotional options for contracted authors.
+
+• Comprehensive API Integration for seamless collaboration:
+– Status Updates & Notifications (Webhooks): Automatic updates to partner platform upon completion of AI analysis (incl. link to review, generated blurb, and plagiarism indication), author’s publication decision, or significant new reader reviews.
+
+– Retrieval of AIbookReview.com Data (with author’s consent): API endpoints for retrieving AI scores, summaries, promotional blurb, process checklist status, plagiarism indication, and reader review data to display on the partner platform. Option to integrate AIbookReview.com’s “featured books” data.
+
+– Synchronization of Book and Sales Information: API for updating book status (published, etc.), sales information (links, prices, availability) between AIbookReview.com and the partner platform.
+
+– Facilitation of User Management: APIs to streamline the creation/linking of AIbookReview.com accounts for authors (e.g., via SSO-like flows, with consent).
+
+– Feedback API: Channel for partners to provide aggregated, anonymous feedback.
+
+– For Service Providers (Editors, Designers, Coaches, Illustrators, etc.):
+• Service Provider Profiles: Ability to create a profile with specializations, portfolio, rates (optional), author reviews.
+
+• Discoverability: Visibility to authors looking for specific services (general and via AI-suggested needs for authors).
+
+• Reviews/Ratings: Receiving reviews from authors who have used their services (linkage with author’s checklist?).
+
+• (Optional/Premium): Featured placement, better matching with AI-signaled needs.
+
+– For Bloggers/Reviewers:
+• Discovery Tool: Easily find new, potentially high-quality self-published books based on AI score, reviews, genre, etc.
+
+• Reviewer Profiles: Own profile with links to blog/socials, ability to link reviews to books on the platform.
+
+• Direct Author Contact: Ability to easily contact authors for review copies or interviews.
+
+– Platform-Wide:
+• Featured books/authors/service providers/bloggers.
+
+• Themed weeks/Writing challenges.
+
+• Newsletter with highlights and recommendations.
+
+• Multilingual support.
+
+• Technology (High-Level): SaaS model, AI/ML (for platform analysis, signaling service needs, generating blurbs, and supporting plagiarism detection, with multilingual capabilities), Integration with specialized plagiarism detection APIs, Web platform (responsive, multilingual), Database (for metadata, reviews, user data; not for permanent storage of manuscripts), Comprehensive and well-documented APIs for partners. Strict data deletion protocols.
+3.1 Value Proposition per Stakeholder (The ‘Lucrative’ Business Case)
+• For Readers/Book Buyers:
+– Value: Reduced risk of bad purchases, better discovery of quality books, community and interaction, transparency about the creation process.
+
+– Lucrative Aspect: Better value for money, unique finds, increased reading pleasure, direct line to authors.
+
+• For Self-Publishing Authors:
+– Value: Concrete feedback (platform AI incl. suggestions for help), credibility (platform AI + process checklist incl. own AI use), increased visibility, community, reader insights, direct line to platforms/service providers.
+
+– Lucrative Aspect: Higher sales potential, possibility of (slightly) higher pricing, savings on (early) editing costs, faster reputation building, reader engagement, easier networking, targeted help.
+
+• For Self-Publishing Platforms:
+– Value: Access to qualified manuscripts, additional sales channel, image improvement (association with quality), more efficient talent scouting, market insights, added value for their authors, seamless integration via robust APIs. The added certainty of plagiarism detection increases value.
+
+– Lucrative Aspect: Additional revenue, attracting serious authors, significant savings on selection and initial review costs, paid partnerships, targeted marketing, better positioning against competitors.
+
+• For Service Providers:
+– Value: Visibility, qualified leads via AI signaling, professional profiling, feedback/reviews.
+
+– Lucrative Aspect: More/relevant assignments, more efficient marketing, reputation building.
+
+• For Bloggers/Reviewers:
+– Value: Efficient discovery of relevant books, access to authors, profiling.
+
+– Lucrative Aspect: Time savings, unique content, growth in reach/authority.
+
+• For the Owner of this Platform:
+– Value: Central position in a growing (international) market, valuable ecosystem (data/community/tools), problem solver for the self-pub niche.
+
+– Lucrative Aspect: Multiple income streams (author subscriptions, sales commissions, partnership fees from self-pub platforms, premium features for service providers, paid access for talent scouts, data sales). Scalable SaaS model.
+4. Target Audience
+• Primary Target Audience:
+– Self-publishing authors (national and international).
+
+– Readers/book buyers (worldwide) interested in self-published works.
+
+• Secondary/Supporting Target Audience:
+– Self-publishing platforms/publishers (e.g., NL: MijnBestseller, Brave New Books, Pumbo, Boekscout, Gigaboek, Coppelaar, Boekengilde, Bookmundo; International: Amazon KDP, IngramSpark, Lulu).
+
+– Service providers in the book industry (editors, designers, coaches, illustrators, etc., potentially international).
+
+– Book bloggers, reviewers, (literary agents) (international).
+5. Market Validation and Competitive Analysis
+• Market Size and Growth: The self-publishing market is growing steadily, both nationally and internationally, partly driven by technological accessibility and authors’ desire for more control. The market for support services (editing, design, marketing) is growing alongside it.
+– Indication of the Dutch Market (May 2025, source: Bol.com listings for POD):
+• Brave New Books: approx. 12,693 books listed.
+
+• MijnBestseller: approx. 4,991 books listed.
+
+• Bookmundo (as explicit publisher): approx. 2,400 books listed.
+
+• Pumbo: approx. 549 books listed.
+
+– These figures give an indication of the active offerings of some major Dutch players. Older figures (2016-2019) already showed strong growth in the number of self-published titles and a market share of around 8% of the total offering. This growth is expected to have continued.
+
+• Existing Solutions/Competitors:
+– Direct: Likely no single platform combines the full scope of AIbookReview.com (AI analysis + reader reviews + process checklist + community + tools for platforms + marketplace for service providers/bloggers).
+
+– Indirect:
+• AI writing tools (e.g., ProWritingAid, AutoCrit): Focus on writing improvement for the author, lack platform/community/reader side.
+
+• Reader platforms (e.g., Goodreads, Hebban): Focus on reader reviews and community, lack upfront AI quality check and specific focus on self-pub issues.
+
+• Self-publishing platforms themselves: Often offer limited community/review features and no independent AI analysis.
+
+• Freelance platforms (e.g., Upwork, Fiverr): General, not specific to the book industry, lack the context of AIbookReview.com.
+
+• Specific blogger networks/review platforms.
+
+• Distinctive Feature: The unique integration of an objective(r) platform AI quality check (which also generates a citable promotional blurb and includes plagiarism detection), verified reader reviews, transparency via a detailed author process checklist (including AI use), comprehensive community features, specific tools for self-publishing platforms (including extensive API capabilities), and a marketplace/showcase for service providers and bloggers within the self-pub niche, with a strong focus on security and potential for international, multilingual scalability.
+
+• SWOT Analysis:
+– Strengths:
+• Quality Information and Improvement: AIbookReview.com not only provides transparent information about the quality of self-publishing books but also actively contributes to improving the quality of submitted manuscripts through the AI feedback loop (see author customer journey).
+
+• Unique Value Proposition for Self-Pub Platforms: Offers concrete added value (quality filter, enhanced image, seamless integration) that these platforms often cannot or do not want to provide themselves.
+
+• Cost Reduction through AI: The use of AI for manuscript analysis leads to significant cost savings compared to traditional human review (estimated at €1000+ per book), making the service more accessible.
+
+• Solution to Image Problem: Directly addresses the core problem of the poor image of self-publishing by introducing an objective(r) standard.
+
+• Ecosystem Approach: Connects all relevant stakeholders (authors, readers, platforms, service providers) and creates network effects.
+
+• Innovative and First-Mover Advantage (potential): The concept is relatively new and can capture a leading position in this niche.
+
+• Strong Focus on Author Rights and Security: The policy of immediately deleting manuscripts after analysis significantly increases trust and security for authors.
+
+• Multilingual AI: The ability of modern AI to effectively handle multiple languages is a core strength for international scalability.
+
+• Integrity and Reliability: The addition of plagiarism detection increases the reliability of the platform and the works offered.
+
+– Weaknesses:
+• Dependence on Quality and Acceptance of Platform AI: Success depends on accuracy, reliability, and the extent to which users value and trust the AI assessment.
+
+• Critical Mass Needed (Chicken-and-Egg Problem): The platform is only truly valuable with enough authors, readers, service providers, and affiliated platforms. Attracting all these groups simultaneously is a challenge.
+
+• Platform Complexity: The development and maintenance of AI, community features, review systems, checklists, and API integrations are technically complex and potentially expensive.
+
+• Possible Resistance from Authors: Skepticism towards AI assessment (by the platform) and/or reluctance to be open about their own AI use or engagement of services.
+
+• Verification of Reader Reviews: Making ‘verified purchase’ reviews foolproof can be technically and practically difficult, especially with referrals.
+
+• Novelty of Concept: Market acceptance is uncertain, and much explanation and marketing are needed to clarify the value.
+
+• Reliability of Checklist (incl. AI use): How to verify if authors complete the checklist truthfully? (Trust-based/community control?)
+
+• Management/Quality of Service Provider Profiles: Ensuring relevance and quality of offered services.
+
+• No possibility of version control or re-analysis of the exact same (previously uploaded) file without a new upload.
+
+• Complexity of managing a multilingual platform and community.
+
+• Costs and complexity of integration and licenses for plagiarism detection software.
+
+• No 100% foolproof plagiarism detection possible; managing expectations.
+
+– Opportunities:
+• Timing - AI as Enabler: The concept and services of AIbookReview.com are only now truly feasible and scalable thanks to recent developments and accessibility of advanced AI technology.
+
+• Growing Self-Publishing Market (partly due to AI): AI is expected to further lower the barrier to writing and publishing, leading to strong growth in the self-publishing market and thus a larger potential user base for AIbookReview.com.
+
+• Freemium Model for Author Adoption: Offering a free (basic) subscription initially can attract a large group of authors. Once they experience the value of the AI analysis and the platform, a switch to paid (premium) subscriptions for more extensive features can be made.
+
+• New Revenue Stream - Talent Scouting: The curated database of categorized, classified, and quality-assessed books offers a unique opportunity for (paid) access for talent scouts, literary agents, and traditional publishers looking for new talent in the currently fragmented and unfiltered self-publishing market.
+
+• AI-Driven Author-Service Provider Matching: The AI can signal during manuscript review if specific professional services are needed (layout, copy editing, writing coaching, illustrations, etc.). This creates a direct, valuable lead to (paying) service providers on the platform.
+
+• International Expansion & Multilingualism: After successful implementation in the Dutch market, the concept can be relatively easily scaled to other language areas and countries, partly thanks to AI’s multilingual capabilities. Collaboration with major international players like Amazon KDP, IngramSpark, Lulu.
+
+• Data Analysis & Trends: Collected data on manuscript quality, genres, reader preferences, and AI use can be anonymized, analyzed, and sold as valuable market information.
+
+• Partnerships with Writing Schools & Coaches: Collaborations can lead to the integration of AIbookReview.com as a tool in training programs, attracting new users.
+
+– Threats:
+• Rapid AI Development: Competitors (existing or new) can quickly develop similar or better AI technology. Public perception of AI can also change rapidly.
+
+• Changing Market: The self-publishing market and the role of AI within it are evolving quickly; new platforms or models may emerge.
+
+• Privacy and IP Concerns: Despite the deletion policy, concerns about the security and intellectual property of uploaded manuscripts and data remain a focus. Strict legislation (GDPR).
+
+• Non-Adoption by Key (International) Self-Pub Platforms: If major players like Amazon KDP, IngramSpark, or important national platforms do not participate, it reduces network value and integration possibilities significantly.
+
+• Alternative Quality Indicators: Emergence of other ways to demonstrate quality in self-publishing (e.g., via influencers, other quality marks, AI tools directly integrated into self-pub platforms).
+
+• Cost of AI Technology: The costs of developing, training, or licensing advanced AI can be high and continue to rise.
+
+• Competition from Specialized Freelance/Blogger Platforms: Existing platforms focusing on a portion of the services.
+
+• Discussion/ethics surrounding AI use in the creative sector: Can lead to resistance or negative perception.
+
+• Cultural and market-specific differences in international expansion.
+
+• Abuse by authors attempting to bypass plagiarism detection.
+6. Business Model
+• Revenue Streams:
+– Primary: Authors (subscriptions/credits for AI analysis and premium platform features – start with a freemium model to encourage adoption).
+
+– Secondary:
+• Self-publishing platforms (partnership fees for integration, data access, promotion, use of extensive API functionality).
+
+• Talent scouts/Agents/Traditional Publishers (paid access to the database and advanced search filters for talent scouting).
+
+• Service providers (premium profiles for better visibility, more prominent matching with AI-signaled author needs).
+
+– Tertiary (Optional/Later stage):
+• Commission on book sales initiated through the platform (affiliate model).
+
+• Sale of anonymized data analysis and market trends.
+
+• Subtle, relevant advertisements (use with caution regarding user experience).
+
+• Cost Structure (High-Level):
+– Development and maintenance of the web platform and APIs.
+
+– AI technology costs (development/training of own models, or licenses/API costs for LLMs; development/maintenance of AI for signaling service needs).
+
+– License fees for plagiarism detection software/APIs.
+
+– Hosting, infrastructure, and security.
+
+– Marketing and sales (including content creation, PR, advertising).
+
+– Operational costs (customer support, community management, data analysis, moderation of service provider profiles, API support for partners).
+
+– Personnel costs (developers, marketers, support, management).
+
+– Legal costs (terms and conditions, privacy policy, IP protection, API agreements).
+7. Marketing and Sales Strategy
+• Core Message: “AIbookReview.com: Your Safe, Reliable, and Global Partner for Quality, Originality, Transparency, Community, and Opportunities in Self-Publishing.”
+
+• Phase 1: Foundation & Partnership (Pre-Launch / MVP Launch)
+– Strategic Partnerships: Actively approach and collaborate with key Dutch self-publishing platforms (e.g., MijnBestseller, Brave New Books, Pumbo, Boekengilde, Boekscout) and industry organizations (e.g., Boekenvak, relevant writers’ associations). In parallel, make initial contact with international platforms (Amazon KDP, IngramSpark, Lulu) for later integration/collaboration.
+• Goal: Find co-investors (NL), secure commitment for promotion and integration (NL), gather feedback on MVP, align API needs.
+
+• Offer: Early access, input, potential revenue sharing/benefits, access to API for testing/integration.
+
+– MVP Development: (Focus on one starting language, e.g., Dutch, with architecture prepared for multilingualism and basic API functionality, including basic plagiarism detection functionality).
+
+– Content Marketing (Basic): Start creating basic content (blog, social media posts) explaining the problems in self-publishing and AIbookReview.com’s solution.
+
+• Phase 2: Initial Growth & Platform Population (Post-MVP Launch) (Focus on start market)
+– Joint Launch with Partners: Utilize partners’ channels to introduce AIbookReview.com to their existing author base.
+• Action: Broad mailing campaigns, promotion on partner websites and social media.
+
+• Incentive: Free (basic) AI analysis for early adopters, opportunity to be among the first to get an AIbookReview.com profile and review.
+
+– Pilot Phase & Feedback Loop: Start with a controlled group of authors to test the platform, gather feedback, and resolve initial issues. Continuous learning and improvement.
+
+– Expansion of Content Marketing: Create valuable content for authors (writing tips, self-publishing guides, AI analysis explanations) and readers (how to find quality self-published books).
+
+– SEO Optimization (Basic): Ensure the platform is findable for relevant search terms.
+
+– Community Building (Start): Set up an online community (e.g., forum, Facebook group) for early users to share experiences and have direct contact with the AIbookReview.com team.
+
+• Phase 3: Public Awareness & Scaling (National)
+– Targeted PR & Media: Approach trade media (e.g., Schrijven Magazine, Boekblad, Inct), organize (or participate in) events like the National Publishers’ Day or writing fairs.
+
+– Social Media Marketing: Active campaigns on relevant social media channels (Facebook, Instagram, LinkedIn, Twitter/X, possibly TikTok for younger audiences) targeting authors, readers, and the book world.
+• Use of user-generated content, testimonials, success stories.
+
+– Influencer Marketing: Collaborate with book bloggers, bookstagrammers, authors with a large reach, and other opinion leaders in the (self-)publishing world.
+
+– SEO & SEA: Comprehensive search engine optimization and possibly paid advertising campaigns (Google Ads).
+
+– Expansion of Community Features: Organize webinars, Q&As, writing contests to activate and grow the community.
+
+• Phase 4: Mainstream Adoption (National) & International Expansion
+– National Press & Media: Once there is sufficient traction and interesting stories (successful authors, market impact), approach national newspapers, magazines, radio, and possibly TV programs focused on culture, entrepreneurship, or innovation.
+
+– Affiliate Marketing: Consider affiliate programs with partners and influencers.
+
+– Direct Outreach: Systematically approach service providers and encourage them to create profiles.
+
+– International Expansion:
+• Translate platform and marketing materials.
+
+• Actively approach international self-publishing platforms (Amazon KDP, IngramSpark, Lulu, etc.) for partnerships and integrations via the developed APIs.
+
+• Adapt marketing strategy to specific international markets.
+
+• Build international communities.
+8. Team
+• Initiators: Ron van Wieringen, Bert-Jan Werkman.
+
+• Required Core Expertise:
+– Technology (Full-Stack Web Development, AI/Machine Learning, Data Science, DevOps, Security, API Development & Management).
+
+– Marketing & Sales (Digital Marketing, Content Creation, Community Management, PR, Business Development, Partnership Management).
+
+– Publishing Industry Knowledge (Specifically self-publishing, editing, market trends).
+
+– Product Management (Vision, roadmap, user experience).
+
+– Operational Management (Customer service, administration).
+
+– For international expansion: Localization expertise, international marketing.
+
+– AI ethics/policy advisor (possibly external).
+9. Roadmap and Milestones
+• Phase 1: MVP Development & Launch (e.g., 6-9 months)
+– Goal: Working basic platform with core AI analysis, author profiles, reader reviews, search function, basic quality process checklist (incl. limited AI use options), free basic subscription for authors. Focus on one starting language (e.g., Dutch). Development of initial set of API endpoints for core partner functionality. Basic plagiarism detection functionality.
+
+– Milestones: MVP specifications finalized, technical design ready (incl. API architecture), development completed, internal tests, beta version launch for pilot group.
+
+• Phase 2: Community Building & First Partnerships (e.g., 9-18 months post-MVP)
+– Goal: Growth in user numbers (authors and readers nationally), validation and improvement of AI model, first partnerships with Dutch self-pub platforms (incl. API integration pilots), introduction of basic functionality for service providers/bloggers, introduction of paid features/subscriptions for authors, pilot of AI signaling for service needs.
+
+– Milestones: X number of active authors, Y number of AI reviews, Z number of reader reviews, first 2-3 partnerships signed (with API connection), successful pilot of AI signaling.
+
+• Phase 3: Ecosystem Development & Monetization (e.g., 18-30 months post-MVP)
+– Goal: Roll out full functionality (advanced search, gamification, etc.), premium features for authors and service providers, paid access for talent scouts, full rollout of AI signaling and premium matching for service providers. Growth of national market share. Expansion and refinement of API offerings.
+
+– Milestones: Break-even point reached (or clear path towards it), X% growth in paid subscriptions, successful launch of talent scout module, X number of active API partners.
+
+• Phase 4: International Expansion & Further Scaling (from 30+ months)
+– Goal: Translate and launch platform in 1-2 new language areas/markets, establish international partnerships (incl. API integrations), marketing campaigns in new regions.
+
+– Milestones: Successful launch in a new market, X number of international users, first international partnerships with API integration.
+10. Financial Projections (Later stage)
+• Expected Investment Needs: (For MVP development, marketing, operational costs for the first 1-2 years).
+
+• Revenue Forecasts: (Based on user numbers, conversion rates to paid services, pricing of subscriptions and fees).
+
+• Cost Forecasts: (Development, operational, marketing, personnel).
+
+• Break-even analysis and long-term profitability.
+11. Risk Analysis and Mitigation
+• Risks:
+– Acceptance/Quality of Platform AI: Will the AI be seen as reliable and valuable? Is the quality consistently high? (Including accuracy and acceptance of AI-signaled service needs).
+
+– Competition: New or existing players with similar (partial) solutions.
+
+– Technical Complexity/Costs: Development and maintenance of AI, a complex platform, and robust APIs are expensive and challenging.
+
+– Privacy/IP: Despite the deletion policy, the perception of security and correct data handling remains crucial. Any incident (even if the manuscript itself is gone) can be damaging.
+
+– Adoption (Critical Mass): Sufficient users (authors, readers, platforms, service providers) needed to make the ecosystem valuable. Non-adoption by key (international) self-pub platforms, or lack of API integration by partners.
+
+– Reliability of Checklist (incl. author’s AI use): Authors may not complete it truthfully.
+
+– Quality Control of Service Providers: Risk of low-quality service offerings.
+
+– Negative Perception/Discussion around AI use by Authors: Ethical concerns or fear of AI.
+
+– Complexity and Costs of International Expansion and Multilingual Platform Management.
+
+– Plagiarism and Abuse: Risk of authors trying to misuse the system by uploading others’ work. Incomplete plagiarism detection.
+
+• Mitigation:
+– General: Strong focus on Unique Value Proposition (UVP), phased development via MVP, solid legal basis (terms, privacy, API agreements), active marketing, community management, and partnership strategy.
+
+– Specific to Acceptance/Quality of Platform AI (incl. signaling service needs): Continuous investment in AI development and training. Transparent communication about AI capabilities and limitations (explaining how signaling works, no obligation for author). The AI assessment is public, allowing its quality to be validated by readers and authors; authors see the analysis before publication and can respond and use the feedback. Actively collecting feedback on AI assessments to improve them. Combining with human reader reviews and process checklist to nuance and contextualize the AI judgment. Giving authors control to ignore or accept suggestions.
+
+– Specific to Reliability of Checklist (incl. author’s AI use): Clear communication that the checklist is an indication based on author input. Reliance on the combination of the checklist with verified reader reviews as ‘social control’; significant discrepancies will likely be noted and mentioned by the community. Option for author to provide clarification. Making it clear that AI is a tool and the author remains ultimately responsible.
+
+– Specific to Quality Control of Service Providers: Clear guidelines for profiles, robust review and rating system by authors, possible verification process for certain claims or certifications, user reporting mechanism for abuse.
+
+– Specific to Perception of Author’s AI Use: Focus on transparency as a value, positioning the platform as a neutral facilitator, providing education and space for discussion on responsible and ethical AI use in the creative process.
+
+– Specific to Privacy/IP and Author Trust: Implementation of a strict policy whereby manuscripts are immediately and permanently deleted from servers after analysis. Clear communication about this to authors. Robust security measures for data that is stored (reviews, metadata). Transparency about data usage.
+
+– Specific to International Expansion: Thorough market research per region, phased rollout, collaboration with local experts/partners, flexible approach to cultural differences, investment in quality translation and localization.
+
+– Specific to API Integration and Adoption: Develop clear API documentation, provide technical support to partners, iteratively develop API features based on partner feedback.
+
+– Specific to Plagiarism and Abuse: Implementation of robust plagiarism detection software. Clear terms and conditions regarding intellectual property and plagiarism, with consequences for violators. Transparent communication about the limitations of plagiarism detection. User reporting mechanism for suspected plagiarism.
+
+
+
+Screen and API Hierarchy (with Requirement References)
+This document outlines the hierarchical structure of screens and API endpoints for different user roles on the AIbookReview.com platform, with references to the Application Requirements Document v2 (aibookreview_application_requirements_v2).
+General Non-Functional Requirements (Applicable to most/all sections):
+* Usability: NFR014, NFR016, NFR017
+* Responsive Design: NFR015
+* Security (General): NFR008, NFR009, NFR010, NFR012, NFR013
+* Performance (General): NFR003, NFR004
+* Reliability: NFR020, NFR021, NFR022
+* Maintainability: NFR018, NFR019
+* Data Management (General): DM004, DM005
+I. Public/General Access
+Home Page / Landing Page (Refs: FR001)
+o Overview of the platform, value proposition for authors, readers, and service providers.
+o Present the core proposition. Main audience are the readers. "Discover self-published treasured using advanced AI"
+o Main call to action: 'Browse books'.
+o Secondary call to action, for authors: 'Get a free review'.
+o Call to action for registration/login.
+o Link to Reader Review Overview.
+o Link to Service Provider Directory (if publicly viewable).
+Login Page (Refs: FR003, NFR010)
+o Fields for email/password.
+o "Login" button.
+o Link to registration.
+o "Forgot Password" functionality.
+o Divider (e.g., "Or log in with")
+o SSO Options: (Refs: FR003)
+* Button: "Log in with Google"
+* Button: "Log in with Microsoft"
+* Button: "Log in with Facebook"
+Registration Page (Refs: FR002, NFR010, DM004)
+o Fields for name, email, password, role selection (Author, Reader, Service Provider, Blogger/Reviewer).
+o "Register" button.
+o Terms of Service agreement.
+o Divider (e.g., "Or register with")
+o SSO Options: (Refs: FR002)
+* Button: "Register with Google"
+* Button: "Register with Microsoft"
+* Button: "Register with Facebook"
+o (Note: After SSO registration, user might be prompted to confirm role if not inferable).
+* Review Presentation Page (Publicly Accessible via Link - Only if Review Status is 'Public') (Refs: FR004, FR108, FR109, FR110, DM003)
+o Displays the full review details (as generated for authors).
+o Author Name (Links to I. Public Author Profile Page), Title, Cover Image.
+o AI Quality Score (e.g., 78/100). (Ref: FR703)
+o Plagiarism Check Summary/Indication. (Ref: FR704)
+o Single-line summary of the book. (Ref: FR706)
+o 100-word summary of the book. (Ref: FR706)
+o AI-Generated Promotional Blurb (approx. 25 words). (Ref: FR705)
+o Single-line summary of the review. (Ref: FR706)
+o Full AI review content. (Ref: FR707)
+o Author's Process Checklist (Summary View). (Ref: FR109)
+o Author's Response to AI Review (if provided). (Ref: FR110)
+o Review date, Language.
+o "Where to Buy" Section (Displays Book_Purchase_URLs). (Ref: FR108)
+o (If applicable) Link/indication of in-depth review. (Ref: FR112)
+o AI-Signaled Service Needs (General Categories, if public). (Ref: FR708)
+Public Author Profile Page (New) (Refs: FR005, FR113, DM003, DM004)
+o Author's Name and Profile Picture.
+o Author's CV/Bio (maintained by author).
+o Link to Author's External Website.
+o List of Public Reviews:
+* For each public book: Title, Cover Image, AI Quality Score, Single-line summary, Link to Review Presentation Page.
+* Service Provider Directory (Publicly Accessible - Optional, or for logged-in users only) (Refs: FR006, FR301)
+o Search and filter service providers by specialization, language, ratings.
+o List of service provider profiles (summary view).
+o Clicking a profile leads to the Public Service Provider Profile Page.
+Public Service Provider Profile Page (Refs: FR007, FR301)
+o Displays service provider's specializations, public portfolio, overall rating.
+o (Limited view compared to what authors might see when logged in).
+II. Author Portal
+(General NFRs for Author Portal: NFR007 - Manuscript Security, DM002 - Manuscript Deletion)
+A. Author Registration Screen (Covered under I. Public/General Access - Role: Author) (Refs: FR002)
+B. Author Login Screen (Covered under I. Public/General Access) (Refs: FR003)
+C. Author Dashboard / Main Overview (Refs: FR100)
+o Welcome message.
+o Quick access to "Make New Review."
+o Summary of existing reviews (e.g., count, latest review with AI Quality Score).
+o Navigation to "My Reviews," "My Profile," "Find Services," "Messages," "Notifications."
+D. Make New Review (Multi-Step Process)
+o D1. Upload Manuscript Screen (Refs: FR101, NFR007, DM002, NFR023, FR700)
+* File input field ("Browse" button) for manuscript (.PDF, .docx, .txt, .md).
+* Visual feedback on file selection.
+* "Next" or "Analyze Manuscript" button.
+o D2. Metadata Confirmation & Edit Screen (Refs: FR102, FR702, DM003)
+* Displays AI-extracted metadata: Title, Author Name, Language, Book Type, ISBN, Keywords.
+* Editable fields for all metadata.
+* "Start Free Review" button.
+o D3. Review in Progress Screen (Refs: FR103, NFR001)
+* Displays a progress bar or loading indicator.
+* Text indicating the review is being generated.
+o D4. Review Results Screen (Free Review) (Refs: FR103, FR104, FR107, FR701, FR703, FR704, FR705, FR706, FR707, FR708, DM003)
+* Notification: "Review Complete!"
+* "Publish Review" Toggle Switch (Default: OFF - Private). (Ref: FR107)
+* Display: AI Quality Score, Shareable link, Plagiarism Check Results, Book Summaries, Promotional Blurb, Review Summary, Full Review Content.
+* AI-Signaled Service Needs: Links to Find Services.
+* Author's Response to AI Review: Text area. (Ref: FR110)
+* Cover Upload: (Ref: FR111)
+* Option for In-Depth Review: (Ref: FR112)
+* Button: "Proceed to Publish Options / My Reviews."
+E. In-Depth Review Process (Accessed from D4 or My Reviews) (Refs: FR112, NFR001)
+o E1. In-Depth Review Confirmation & Payment Screen
+* Details, Price, Payment gateway integration.
+o E2. In-Depth Review in Progress Screen
+o E3. In-Depth Review Results Screen (Refs: FR103, FR104, FR709)
+* Display detailed feedback.
+F. My Reviews Overview Screen (Refs: FR106)
+o List/table of all reviews: Title, Date, Type, AI Quality Score, Visibility, Status, etc.
+F1. My Review Details Page (Refs: FR104, FR105, FR107, FR108, FR109, FR110, FR111, FR115)
+o Displays all results, "Publish Review" Toggle.
+o Downloadable Review Report. (Ref: FR105)
+o Link to edit Author's Process Checklist.
+o Link to edit Author's Response.
+o Link to manage Shared Excerpts/Bonus Material.
+o Section: Manage Purchase URLs.
+G. Author's Process Checklist Management Screen (Per Book) (Refs: FR109, DM003)
+o Professional Services Engaged Section.
+o Use of AI Tools by Author Section.
+H. Find Services / Service Provider Marketplace (Author View) (Refs: FR114, FR301, FR302)
+o Search and filter service providers.
+o View service provider profiles.
+o Contact service providers (Ref: FR600).
+I. Author Profile Management Screen (Refs: FR113, DM004)
+o Edit name, bio, CV/Bio, External Website URL, profile picture.
+o Link to Notification Settings (Ref: FR601).
+J. Share Excerpts/Bonus Material Screen (Per Book) (Refs: FR115, DM003)
+o Upload/manage supplementary content.
+III. Reader Portal
+A. Reader Registration Screen (Refs: FR002)
+B. Reader Login Screen (Refs: FR003)
+C. Reader Dashboard / Main Overview (Refs: FR200)
+o Personalized recommendations, recent activity, updates, navigation.
+D. Reader Review Overview (Refs: FR201, FR004, FR005)
+o (Note: This overview only shows reviews marked as 'Public').
+o Search & Filtering: Genre, Language, AI Quality Score range, Reader Ratings, etc.
+o Review Listing: Cover, Title, Author (links to Public Author Profile), AI Score, Blurb.
+E. Reader Profile Management Screen (Refs: FR202, DM004)
+o Manage preferences, view history, manage follows.
+o View earned badges (Gamification - Phase 4). (Ref: FR202)
+o Link to Notification Settings (Ref: FR601).
+F. My Bookshelves/Reading Lists Screen (Phase 4) (Refs: FR204, DM003)
+o Create and manage custom reading lists.
+G. Discussion Forums/Groups Screens (Phase 4) (Refs: FR205, FR809)
+o Browse, create threads, post replies.
+H. Q&A Session Screens (Phase 4) (Refs: FR206, FR809)
+o View and participate in Q&A sessions.
+I. Reader Review Submission/Edit Screen (on Review Presentation Page) (Phase 3 onwards) (Refs: FR203, DM003)
+o Input field for review text, star rating.
+IV. Self-Publishing Platform Portal (API-Driven, with Optional UI) (Phase 4 onwards)
+(General NFRs for API: NFR002, NFR011, NFR005 - Scalability)
+A. Platform Registration Screen (Admin Managed or Self-Serve with Approval) (Refs: FR500)
+B. Platform API Key Management Screen (Refs: FR500)
+C. Platform Partner Dashboard (Optional UI on AIbookReview.com) (Refs: FR500)
+o API usage, Talent Scouting Dashboard, Manage Publisher Profile.
+D. API Endpoints
+o D1. POST /platforms/register: (Refs: FR500)
+o D2. GET /api/reviews: (Refs: FR501)
+o D3. GET /api/reviews/{review_id}: (Refs: FR502)
+o D4. GET /api/search: (Covered by FR501 logic)
+o D5. POST /api/manuscripts/upload: (Implied for potential future direct submission via API, not explicitly in FR list for partners yet, aligns with author FR101)
+o D6. POST /api/manuscripts/{manuscript_id}/extract-metadata: (Implied for potential future direct submission via API)
+o D7. GET /api/manuscripts/{manuscript_id}/metadata: (Implied for potential future direct submission via API)
+o D8. PUT /api/manuscripts/{manuscript_id}/metadata: (Implied for potential future direct submission via API)
+o D9. POST /api/manuscripts/{manuscript_id}/trigger-review: (Implied for potential future direct submission via API)
+o D10. GET /api/reviews/status/{review_job_id}: (Implied for tracking reviews initiated via API)
+o D11. GET /api/reviews/results/{review_job_id}: (Implied for fetching results of reviews initiated via API)
+o D12. POST /api/webhooks/subscribe (Phase 5): (Refs: FR507)
+o D13. GET /api/talent-scouting: (Covered by FR501 with advanced filters)
+o D14. POST /api/books/{book_id}/purchase-urls (New): (Refs: FR504)
+o D15. PUT /api/reviews/{review_id}/visibility (New): (Refs: FR505)
+o D16. GET /api/authors/{user_id} (New): (Refs: FR503)
+o (API Documentation: FR506)
+V. Admin Portal
+A. Admin Login Screen (Separate, secure login) (Refs: FR003)
+B. Admin Dashboard (Refs: FR800)
+o Overview statistics, navigation.
+C. User Management Screen (Refs: FR801)
+o CRUD for all user roles.
+D. LLM Management Screen (Refs: FR802, FR703)
+o Goal: Manage AI model configurations.
+E. Prompts Management Screen (Refs: FR803)
+o Manage prompts for LLMs.
+
+F. API Key Management Screen (for Self-Publishing Platforms) (Refs: FR500, FR804)
+o Manage partner API keys.
+G. Content Moderation / Review Oversight (Refs: FR805)
+o Review flagged content.
+H. Service Provider Management Screen (Refs: FR806)
+o Approve/manage SP accounts.
+I. Blogger/Reviewer Management Screen (Refs: FR807)
+o Manage blogger/reviewer accounts.
+J. Platform Settings Screen (Refs: FR808)
+o Site-wide settings, categories, featured content, newsletter, gamification.
+K. Community Management Screen (Refs: FR809)
+o Moderate forums, manage Q&As, events.
+VI. Service Provider Portal (Phase 3 onwards)
+A. Service Provider Registration Screen (Refs: FR002)
+B. Service Provider Login Screen (Refs: FR003)
+C. Service Provider Dashboard (Refs: FR300)
+o Leads, messages, reviews.
+D. My Profile Management Screen (Service Provider) (Refs: FR301)
+o Edit details, specializations, portfolio, rates, availability.
+o Link to Notification Settings (Ref: FR601).
+E. My Leads / Opportunities Screen (Refs: FR302, FR708)
+o List authors with AI-signaled needs.
+F. My Service Reviews Screen (Refs: FR303)
+o View reviews from authors.
+o (Author reviews of SPs: FR304)
+VII. Blogger/Reviewer Portal (Phase 4 onwards)
+A. Blogger/Reviewer Registration Screen (Refs: FR002)
+B. Blogger/Reviewer Login Screen (Refs: FR003)
+C. Blogger/Reviewer Dashboard / Main Overview (Refs: FR400)
+o Updates, quick links.
+D. Blogger/Reviewer Profile Enhancement Screen (Refs: FR401)
+o Add blog URL, social links, specializations.
+o Link to Notification Settings (Ref: FR601).
+E. My Submitted Reviews / Content Screen (Refs: FR403)
+o View their submitted content links.
+F. Discover Books for Review Screen (Refs: FR402)
+o Search/filter books for review.
+VIII. Platform Messaging System (Integrated) (Phase 3 onwards)
+A. Inbox Screen (Refs: FR600)
+B. Compose Message Screen (Refs: FR600)
+C. Sent Messages Screen (Refs: FR600)
+D. Archived Messages Screen (Refs: FR600)
+IX. Platform Notification System (Integrated) (Phase 3 onwards)
+* A. Notification Area/Dropdown (Refs: FR601)
+* B. All Notifications Page (Refs: FR601)
+* C. Notification Settings Screen (Refs: FR601)
+Data Management Requirements (General Application): DM001 (MySQL), DM002 (Manuscript Deletion), DM003 (Metadata/Review Storage), DM004 (User Data Security), DM005 (Retention Policies).
+Internationalization NFRs (General Application): NFR023 (AI Analysis), NFR024 (UI Translation - Phase 5), NFR025 (Data Formats).
+
+
+
+Application Requirements Document
+1. Introduction & Overview
+1.1. Purpose
+This document outlines the functional and non-functional requirements for the AIbookReview.com platform. It serves as a comprehensive guide for the design, development, and testing of the application. This document supersedes earlier, more focused requirement sets (e.g., for the Proof of Concept).
+1.2. Project Overview
+AIbookReview.com is a Software-as-a-Service (SaaS) platform designed to connect self-publishing authors, readers, self-publishing platforms, and service providers. It aims to enhance the quality and credibility of self-published works through AI-powered manuscript analysis, quality assessment, plagiarism detection, and community features. The platform will provide transparency in the creation process and foster a supportive ecosystem for all stakeholders. A core principle is the security of authors' intellectual property, with manuscripts being deleted after analysis. The platform will support multiple languages for manuscript analysis FRom its initial launch.
+1.3. Scope
+This document covers the requirements for all user roles (Author, Reader, Service Provider, Blogger/Reviewer, Platform Partner, Admin) and all planned phases of development as outlined in the AIbookReview.com Development Roadmap (see aibookreview_roadmap).
+2. Target Audience
+* Primary:
+o Self-publishing authors (national and international).
+o Readers/book buyers interested in self-published works (worldwide).
+* Secondary/Supporting:
+o Self-publishing platforms/publishers.
+o Service providers in the book industry (editors, designers, coaches, illustrators, etc.).
+o Book bloggers, reviewers, and literary agents.
+3. User Roles & Key Objectives
+* Author:
+o Objective: Obtain objective AI-driven feedback on manuscripts, improve work quality, gain credibility, manage review visibility, connect with readers and service providers, and increase discoverability.
+* Reader:
+o Objective: Discover quality self-published books, access transparent review information (AI and human), engage with authors and a reading community, and make informed purchasing decisions.
+* Service Provider (Editor, Designer, etc.):
+o Objective: Showcase services, connect with authors needing their expertise (including AI-signaled leads), build reputation, and manage client interactions.
+* Blogger/Reviewer:
+o Objective: Discover new books for review, share their expertise, connect with authors, and build their audience.
+* Platform Partner (Self-Publishing Platform):
+o Objective: Integrate AIbookReview.com's quality assessment into their workflow, offer value-added services to their authors, scout talent, and access review data via API.
+* Administrator:
+o Objective: Manage users, oversee platform operations, configure AI models and prompts, manage content, support partners, and ensure platform health.
+4. Functional Requirements
+This section details the features and functionalities of the platform, categorized by user portal/module and aligned with the development roadmap phases.
+4.1. Public Access & General Features
+FR001: Home Page: Display platform overview, value propositions, and calls to action.
+FR002: User Registration:
+o Allow new users to register by providing name, email, password, and selecting a role (Author, Reader, Service Provider, Blogger/Reviewer).
+o Support Single Sign-On (SSO) with Google, Microsoft, and Facebook.
+o Require agreement to Terms of Service.
+FR003: User Login:
+o Allow registered users to log in using email/password.
+o Support SSO login.
+o Implement "Forgot Password" functionality.
+FR004: Public Review Presentation Page:
+o Display full AI review details for reviews marked "Public" by the author.
+o Include: Author name (linking to Public Author Profile), Title, Cover Image, AI Quality Score, Plagiarism Check Summary, book summaries, promotional blurb, AI review summary, full AI review content, Author's Process Checklist summary, Author's Response (if any), review date, language.
+o Display "Where to Buy" links for the book.
+FR005: Public Author Profile Page:
+o Display author's name, profile picture, CV/bio (maintained by author), link to author's external website.
+o List all public reviews for that author with key details and links to the full review.
+FR006: Public Service Provider Directory:
+o Allow users to browse and search for service providers.
+o Display summary profiles with links to detailed Public Service Provider Profile Pages.
+FR007: Public Service Provider Profile Page:
+o Display service provider's specializations, public portfolio, overall rating.
+4.2. Author Portal Requirements
+FR100: Author Dashboard: Display welcome message, quick links (New Review, My Reviews, Profile, Find Services, Messages, Notifications), and summary of recent activity.
+FR101: Manuscript Upload:
+o Allow authors to upload manuscripts in supported formats (.PDF, .docx, .txt, .md).
+o Detect or allow selection of manuscript language.
+FR102: AI-Powered Metadata Extraction:
+o Automatically extract/suggest: Title, Author Name, Language, Book Type, ISBN, Keywords (max 5).
+o Allow authors to confirm and edit extracted metadata.
+FR103: AI Review Generation (Multilingual):
+o Initiate AI analysis upon author request.
+o Review output language to default to the manuscript's language.
+o Provide progress indication during analysis.
+o Generate:
+* AI Quality Score (0-100).
+* Plagiarism Check Summary & Indication.
+* Single-line Book Summary.
+* 100-word Book Summary.
+* AI-Generated Promotional Blurb (approx. 25 words, editable by author).
+* Single-line Review Summary.
+* Full AI Review Content (Markdown formatted).
+* AI-Signaled Service Needs (suggestions for professional services).
+o The review results are stored in the database, with default status 'private review'.
+FR104: Review Results Display: Present all generated AI review components clearly to the author.
+o Offer a placeholder for the book cover. When there is no cover yet, offer the option to upload the cover image.
+o Offer the option to discard the review, the uploaded manuscript (or better: not to save it). If this option is selected, the review stays in the database with status 'public review'.
+o Offer the option to write an author's reaction to the review and then publish the review.
+o Offer the option to publish the review.
+o Set the book publication status: soon to be published (with an optional publication date) / published and on sale.
+o Offer the option to enter maximum 5 links to pages where the book is (or will be) on sale.
+o Offer the option to push an AI-powered promotional message to various social media. 'AibookReview just created a great review of my new manuscript! ' and then the promotional text, and then a link to the Public Review Presentation page.
+o In all cases, the manuscript is not stored.
+
+FR105: Downloadable Review Report: Allow authors to download their AI review results (e.g., as PDF).
+FR106: "My Reviews" Overview:
+o List all reviews initiated by the author.
+o Display: Title, Date, Review Type, AI Quality Score, Visibility Status, Link to details.
+FR107: Review Visibility Control:
+o Allow authors to toggle review visibility between "Private" (default) and "Public" via a "Publish Review" switch on the Review Results and My Review Details pages.
+FR108: Manage Purchase URLs: Allow authors to add, edit, and delete URLs where their book can be purchased (displayed on public review page).
+FR109: Author's Process Checklist:
+o Allow authors to fill out a checklist per book detailing professional services engaged and AI tools used in writing.
+o This checklist summary to be visible on the public review page.
+FR110: Author's Response to AI Review: Allow authors to write and display a response alongside the AI review.
+FR111: Cover Image Upload: Allow authors to upload a cover image for their book.
+FR112: In-Depth AI Review (Paid Feature - Phase 4):
+o Offer an option for a more detailed AI review with actionable feedback.
+o Integrate with a payment gateway.
+FR113: Author Profile Management:
+o Allow authors to manage their full name, profile picture, comprehensive CV/bio, and external website URL.
+FR114: Find Services (Service Provider Marketplace):
+o Allow authors to search/filter service providers.
+o View detailed service provider profiles.
+o Contact service providers via platform messaging.
+o View AI-suggested services and providers for their manuscripts.
+FR115: Share Excerpts/Bonus Material: Allow authors to upload and manage supplementary content for their books.
+4.3. Reader Portal Requirements
+FR200: Reader Dashboard: Display personalized recommendations, recent activity, updates from followed users, and navigation links.
+FR201: Reader Review Overview:
+o Display a browsable, searchable, and filterable list of all public AI reviews.
+o Filters: Genre, Language, AI Quality Score range, Reader Ratings, Keywords, etc.
+o Sorting: Author, Title, AI Quality Score, Reader Rating, Date, etc.
+o Each listing to show key details (Cover, Title, Author, AI Score, Blurb) and link to the full Review Presentation Page.
+FR202: Reader Profile Management:
+o Manage display name, preferences (genres, languages).
+o View reading history, manage followed authors/bloggers.
+o View earned badges (Gamification - Phase 4).
+FR203: Reader Reviews on Books (Phase 3 onwards):
+o Allow readers to submit star ratings (1-5) and textual reviews for books they've read.
+o Display reader reviews on the Review Presentation Page.
+FR204: My Bookshelves/Reading Lists (Phase 4): Allow readers to create and manage custom reading lists.
+FR205: Discussion Forums (Phase 4):
+o Allow readers to browse forums by category.
+o Participate by creating threads and posting replies.
+FR206: Q&A Sessions (Phase 4):
+o Allow readers to view and participate in scheduled Q&A sessions with authors.
+FR207: User Following (Phase 4): Allow readers to follow authors and bloggers for updates.
+4.4. Service Provider Portal Requirements (Phase 3 onwards)
+FR300: Service Provider Dashboard: Display leads, messages, reviews received, and navigation links.
+FR301: Service Provider Profile Management:
+o Manage company/individual name, contact info, bio, logo.
+Define specializations and services offered (FRom predefined categories and custom tags).
+o Manage a portfolio of work (uploads, links).
+o Optionally list rates/packages.
+o Set availability and contact preferences.
+o Specify languages served.
+FR302: Leads/Opportunities Screen:
+o List authors whose AI reviews signaled a need relevant to the provider's specialization (including manuscript AI Quality Score).
+o Option to contact authors (via platform messaging, if author permits).
+FR303: Service Reviews Management:
+View reviews and ratings FRom authors who used their services.
+o Option to publicly respond to reviews.
+FR304: Author Reviews of Service Providers (Phase 4): Allow authors to rate and review service providers they have engaged.
+4.5. Blogger/Reviewer Portal Requirements (Phase 4 onwards)
+FR400: Blogger/Reviewer Dashboard: Display relevant book updates, quick links (Discover Books, My Content, Messages, Notifications).
+FR401: Blogger/Reviewer Profile Enhancement:
+o Add blog URL, social media links.
+o Specify review specializations/genres.
+FR402: Discover Books for Review:
+o Enhanced search/filter to find books (including by AI Quality Score).
+o Option to contact authors for review copies.
+FR403: My Submitted Content: View and manage links to their reviews (on-platform or external).
+4.6. Platform Partner API Requirements (Phase 4 onwards)
+FR500: Partner Registration & API Key Management: Secure process for partners to register and obtain API keys (Admin managed).
+FR501: API Endpoint - Retrieve Public Reviews: Allow authenticated partners to fetch lists of public reviews with filtering and sorting options (including by AI Quality Score).
+FR502: API Endpoint - Retrieve Specific Review Details: Allow fetching all public data for a specific review (including AI score, blurbs, checklists).
+FR503: API Endpoint - Retrieve Public Author Profiles: Allow fetching public author profile data.
+FR504: API Endpoint - Manage Purchase URLs: Allow authenticated partners to add/manage "Where to Buy" URLs for books (with author consent).
+FR505: API Endpoint - Manage Review Visibility: Allow authenticated partners to update review visibility (Public/Private) with author consent.
+FR506: API Documentation: Provide clear and comprehensive API documentation for partners.
+FR507: API Webhooks (Phase 5): Allow partners to subscribe to notifications for key events.
+4.7. Platform-Wide Integrated Systems
+FR600: Messaging System (Phase 3 onwards):
+o Enable private messaging between users (Author-SP, Author-Reader (opt-in), Author-Blogger).
+o Provide inbox, sent items, and message composition screens.
+FR601: Notification System (Phase 3 onwards):
+o Provide in-app and optional email notifications for key events (review completion, new messages, new leads, followed activity, etc.).
+o User-configurable notification settings.
+4.8. AI Core Functionalities (Detailed)
+FR700: Multi-Language Manuscript Analysis: The AI engine must support analysis of manuscripts in multiple predefined languages from Phase 1.
+FR701: Language of Review Output: The AI-generated review text (summaries, full review) must default to the language of the analyzed manuscript.
+FR702: Metadata Extraction: AI to identify and extract Title, Author, Language, Type (Fiction, Non-Fiction, etc.), ISBN, and up to 5 relevant Keywords from the manuscript.
+FR703: AI Quality Score: Generate a numerical score (e.g., 0-100) reflecting the AI's assessment of the manuscript's overall quality based on defined criteria (plot, style, character, etc.). The model and criteria should be configurable by Admins.
+FR704: Plagiarism Detection: Integrate a plagiarism detection mechanism to scan manuscripts against a database of existing works and provide a summary/indication of potential plagiarism.
+FR705: Promotional Blurb Generation: AI to generate a concise (approx. 25 words) promotional blurb for the manuscript.
+FR706: Summarization: AI to generate a single-line summary of the book, a 100-word summary of the book, and a single-line summary of the AI review itself.
+FR707: Detailed Feedback (Full Review): AI to provide structured, detailed feedback on various aspects of the manuscript (e.g., language, style, plot, structure, character development) formatted in Markdown.
+FR708: Service Needs Identification: AI to analyze the manuscript and suggest potential areas where professional services (e.g., editing, design) could be beneficial.
+FR709: In-Depth Review (Paid): A more extensive AI analysis providing a detailed to-do list and actionable improvement suggestions. This may use a different AI model/prompt configuration.
+FR710: Secure Manuscript Handling: Manuscripts are to be stored temporarily only for the duration of the AI analysis and then permanently deleted. Only metadata and AI-generated results are stored.
+4.9. Administration Portal Requirements
+FR800: Admin Dashboard: Overview of platform statistics (users, reviews, API usage, etc.).
+FR801: User Management: CRUD operations for all user roles, including activation/deactivation.
+FR802: LLM Configuration Management:
+o Manage configurations for different AI models used (metadata extraction, review types, quality scoring, plagiarism support, blurb generation, service needs signaling).
+o There is an LLM for metadata extraction, one for initial review and one for detailed (payed) analysis. 
+o For each LLM there is a backup LLM which is used when the primary LLM cannot be reached.
+o LLM attributes: public name, API URL, model code, API key
+
+FR803: Prompt Management: Create, edit, and manage prompts used with the LLMs for various tasks and languages.
+o The prompt for metadata extraction (which can be edited and is stored in the database) is:
+Analyze this manuscript and provide the following information in JSON format: 
+    { 
+        "author": "Name of the primary author (if mentioned, otherwise 'Not specified')", 
+        "co_authors": ["List of co-authors"] or [], 
+        "booktype": "fiction or non-fiction or poetry or screenplay or essay or blog or scientific", 
+        "language": "primary language of the text, in the correct language so for example French is Français and German is Deutsch and Spanish is Español", 
+        "ISBN":"ISBN-number", 
+        "Publisher":"the publisher or uitgever", 
+        "Wordcount":"the number of words in the manuscript", 
+"Topic":"The main topic in maximum 10 words, in the language as identified for the document", 
+"Characters":["in the case of fiction, a list of maximum five names of main characters that appear in the story, sorted from most important to least important", 
+"Location":[" a list of maximum three main geograohical locations where the story is situated"] 
+    } 
+Base your analysis ONLY on the actual content of the manuscript. If any information is not available, use 'Not specified'.
+
+o The prompts for initial review (which can be edited and is stored in the database) are different for each metadata.type (so fiction or non-fiction or poetry or screenplay or essay or blog or scientific)
+o The prompts management page supports using fields from the manuscript metadata (meaning type, topic, language).
+
+FR804: Platform Partner (API Key) Management: Manage registered platform partners, issue/revoke API keys, set usage limits.
+FR805: Content Moderation: Tools to review and moderate user-generated content (reviews, profiles, forum posts).
+FR806: Service Provider Account Management: Approve/manage service provider registrations and profiles.
+FR807: Blogger/Reviewer Account Management.
+FR808: Platform Settings: Manage site-wide settings, categories (genres, service types), featured content, newsletter templates, gamification rules.
+FR809: Community Management Tools: Moderate forums, manage Q&A sessions, set up platform events/challenges.
+5. Non-Functional Requirements
+5.1. Performance
+NFR001: AI analysis completion time should be within an acceptable timeframe communicated to the user.
+NFR002: API response times for partner integrations must meet defined service level objectives (SLOs).
+NFR003: Web application page load times should be optimized for a good user experience.
+NFR004: The system must support a target number of concurrent users without performance degradation (to be defined based on expected load).
+5.2. Scalability
+NFR005: The architecture must be scalable to handle growth in users, data volume, and processing load.
+NFR006: Database design should support efficient querying and growth.
+5.3. Security
+NFR007: Manuscript Security: Uploaded manuscripts must be handled securely, stored temporarily only for analysis, and then irretrievably deleted.
+NFR008: Data Encryption: Sensitive data (e.g., passwords, API keys) must be encrypted at rest and in transit.
+NFR009: Access Control: Role-based access control must be enforced across all platform functions.
+NFR010: Authentication: Secure authentication mechanisms for all user types, including SSO.
+NFR011: API Security: Partner APIs must be secured using API keys and appropriate authentication/authorization.
+NFR012: GDPR Compliance: The platform must comply with GDPR and other relevant data privacy regulations.
+NFR013: Regular security audits and penetration testing should be planned.
+5.4. Usability
+NFR014: The user interface must be intuitive, user-friendly, and easy to navigate for all user roles.
+NFR015: The platform must have a responsive design, providing a good user experience on desktops, tablets, and mobile devices.
+NFR016: Clear error handling and informative user feedback messages must be provided.
+NFR017: Accessibility standards (e.g., WCAG AA) should be targeted.
+5.5. Maintainability
+NFR018: Code should be well-documented, modular, and follow consistent coding standards.
+NFR019: The system architecture should facilitate updates and modifications with minimal impact.
+5.6. Reliability & Availability
+NFR020: The platform should aim for high availability (e.g., 99.9% uptime).
+NFR021: Robust error handling and fault tolerance mechanisms should be implemented.
+NFR022: Regular data backups and a disaster recovery plan must be in place.
+5.7. Internationalization & Localization (I18n & L10n)
+NFR023: AI Analysis: Support for multiple languages in AI manuscript analysis is required from Phase 1.
+NFR024: User Interface: The platform UI should be designed to support translation into multiple languages (full UI translation targeted for Phase 5).
+NFR025: Data formats (dates, numbers, currencies if applicable) should be adaptable for different locales.
+6. Data Management Requirements
+* DM001: The platform will use a relational database (MySQL, as per aibookreview_data_model_mysql).
+* DM002: Manuscript files will not be stored permanently. They will be deleted immediately after the AI analysis process is complete.
+DM003: Metadata extracted FRom manuscripts and AI-generated review content will be stored in the database.
+* DM004: User data, profiles, and interactions will be stored securely.
+* DM005: Data retention policies for user accounts and generated content need to be defined.
+7. Future Considerations (Beyond initial phases, aligned with Roadmap Phase 5+)
+* Enhanced AI capabilities (e.g., deeper genre-specific analysis, trend analysis).
+* Expanded API functionality for partners.
+* Development of dedicated mobile applications (iOS, Android).
+* Advanced analytics dashboards for authors and platform partners.
+* Further expansion into international markets with localized content and support.
+This document will be updated as the project progresses and requirements evolve.
+
+
+
+Conceptual Data Model
+This data model outlines the potential table structures and relationships for the AIbookReview.com platform, designed for a relational database like MySQL.
+Core User & Authentication Tables
+1. Users
+-	user_id (INT, Primary Key, Auto Increment)
+-	username (VARCHAR(255), Unique, Nullable - if email is primary identifier)
+-	email (VARCHAR(255), Unique, Not Null)
+-	password_hash (VARCHAR(255), Nullable - for traditional login)
+-	full_name (VARCHAR(255), Nullable)
+-	role (ENUM(‘Author’, ‘Reader’, ‘ServiceProvider’, ‘BloggerReviewer’, ‘Admin’), Not Null)
+-	profile_picture_url (VARCHAR(2048), Nullable)
+-	bio (TEXT, Nullable)
+-	cv_text (MEDIUMTEXT, Nullable - For public author profile)
+-	external_website_url (VARCHAR(2048), Nullable - For public author profile)
+-	registration_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+-	last_login_date (TIMESTAMP, Nullable)
+-	is_active (BOOLEAN, Default TRUE)
+-	email_verified (BOOLEAN, Default FALSE)
+-	notification_preferences_json (JSON, Nullable - stores settings from IX.C)
+2. SSO_Integrations
+-	sso_id (INT, Primary Key, Auto Increment)
+-	user_id (INT, Foreign Key -> Users.user_id)
+-	provider_name (ENUM(‘Google’, ‘Microsoft’, ‘Facebook’), Not Null)
+-	provider_user_id (VARCHAR(255), Not Null) - Unique per provider
+-	access_token (TEXT, Nullable) - Store securely
+-	refresh_token (TEXT, Nullable) - Store securely
+-	created_at (TIMESTAMP, Default CURRENT_TIMESTAMP)
+-	UNIQUE KEY (provider_name, provider_user_id)
+Book & Review Related Tables
+3. Books
+-	book_id (INT, Primary Key, Auto Increment)
+-	author_user_id (INT, Foreign Key -> Users.user_id, Not Null)
+-	title (VARCHAR(512), Not Null)
+-	language_code (VARCHAR(10), Not Null - e.g., ‘en’, ‘nl’, Foreign Key -> Languages.code)
+-	book_type (ENUM(‘Fiction’, ‘NonFiction’, ‘Screenplay’, ‘Poetry’, ‘Other’), Nullable)
+-	isbn (VARCHAR(20), Nullable, Unique)
+-	cover_image_url (VARCHAR(2048), Nullable)
+-	publication_status (ENUM(‘Draft’, ‘ReviewInProgress’, ‘ReviewCompleted’, ‘PublishedToPlatform’), Default ‘Draft’)
+-	creation_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+-	last_updated_date (TIMESTAMP, Default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)
+4. Book_Keywords
+-	book_id (INT, Foreign Key -> Books.book_id)
+-	keyword_id (INT, Foreign Key -> Keywords.keyword_id)
+-	PRIMARY KEY (book_id, keyword_id)
+5. Keywords
+-	keyword_id (INT, Primary Key, Auto Increment)
+-	keyword_text (VARCHAR(100), Not Null, Unique)
+6. AI_Reviews
+-	ai_review_id (INT, Primary Key, Auto Increment)
+-	book_id (INT, Foreign Key -> Books.book_id, Not Null, Unique - assuming one primary AI review per book)
+-	llm_config_id (INT, Foreign Key -> LLM_Configs.llm_config_id, Nullable)
+-	review_type (ENUM(‘Free’, ‘InDepth’), Not Null)
+-	ai_quality_score (TINYINT UNSIGNED, Nullable - Score 0-100)
+-	visibility_status (ENUM(‘Private’, ‘Public’), Not Null, Default ‘Private’)
+-	plagiarism_summary (TEXT, Nullable)
+-	plagiarism_percentage (FLOAT, Nullable)
+-	plagiarism_report_url (VARCHAR(2048), Nullable - if external report)
+-	summary_single_line_book (TEXT, Nullable)
+-	summary_100_word_book (TEXT, Nullable)
+-	promotional_blurb_25_words (TEXT, Nullable)
+-	summary_single_line_review (TEXT, Nullable)
+-	full_review_content_markdown (MEDIUMTEXT, Nullable)
+-	signaled_service_needs_json (JSON, Nullable - e.g., {"editing": "Plot Development", "design": "Cover Art"})
+-	in_depth_feedback_markdown (MEDIUMTEXT, Nullable - for in-depth reviews)
+-	review_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+-	review_status (ENUM(‘Pending’, ‘InProgress’, ‘Completed’, ‘Failed’), Default ‘Pending’)
+-	INDEX (visibility_status)
+7. Author_Responses_To_AI_Review
+-	response_id (INT, Primary Key, Auto Increment)
+-	ai_review_id (INT, Foreign Key -> AI_Reviews.ai_review_id, Not Null, Unique)
+-	author_user_id (INT, Foreign Key -> Users.user_id, Not Null)
+-	response_text (TEXT, Not Null)
+-	response_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+8. Reader_Reviews
+-	reader_review_id (INT, Primary Key, Auto Increment)
+-	book_id (INT, Foreign Key -> Books.book_id, Not Null)
+-	reader_user_id (INT, Foreign Key -> Users.user_id, Not Null)
+-	rating_stars (TINYINT UNSIGNED, Not Null - 1-5)
+-	review_text (TEXT, Nullable)
+-	is_verified_purchase (BOOLEAN, Default FALSE - harder to implement without e-commerce integration)
+-	review_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+-	is_approved_by_admin (BOOLEAN, Default TRUE)
+-	UNIQUE KEY (book_id, reader_user_id) – One review per reader per book
+9. Author_Process_Checklists
+-	checklist_id (INT, Primary Key, Auto Increment)
+-	book_id (INT, Foreign Key -> Books.book_id, Not Null, Unique)
+-	professional_services_json (JSON, Nullable)
+-	ai_tools_usage_json (JSON, Nullable)
+-	last_updated (TIMESTAMP, Default CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP)
+10. Shared_Excerpts
+-	excerpt_id (INT, Primary Key, Auto Increment)
+-	book_id (INT, Foreign Key -> Books.book_id, Not Null)
+-	excerpt_title (VARCHAR(255), Nullable)
+-	excerpt_content_text_or_url (TEXT, Not Null)
+-	upload_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+11. Book_Purchase_URLs (New)
+-	url_id (INT, Primary Key, Auto Increment)
+-	book_id (INT, Foreign Key -> Books.book_id, Not Null)
+-	url (VARCHAR(2048), Not Null)
+-	description (VARCHAR(255), Nullable - e.g., “Amazon”, “Bol.com”, “Author’s Site”)
+-	platform_partner_id (INT, Foreign Key -> Platform_Partners.platform_partner_id, Nullable - if added via API)
+-	author_user_id (INT, Foreign Key -> Users.user_id, Nullable - if added by author)
+-	added_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+Service Provider Related Tables
+(Tables 12-17 - Service_Provider_Profiles, Service_Specializations, Provider_Specializations_Link, Portfolio_Items, Service_Reviews_For_Providers, Service_Leads - remain unchanged)
+Blogger/Reviewer Related Tables
+(Tables 18-19 - Blogger_Reviewer_Profiles, Blogger_Submitted_Content_Links - remain unchanged)
+Community & Interaction Tables
+(Tables 20-27 - User_Follows, Reading_Lists, Reading_List_Items, Forum_Categories, Forum_Threads, Forum_Posts, QnA_Sessions, QnA_Messages - remain unchanged)
+Platform Partner & API Tables
+28. Platform_Partners
+-	platform_partner_id (INT, Primary Key, Auto Increment)
+-	platform_name (VARCHAR(255), Not Null, Unique)
+-	contact_email (VARCHAR(255), Not Null)
+-	api_key (VARCHAR(255), Not Null, Unique - generated by system)
+-	webhook_url (VARCHAR(2048), Nullable)
+-	usage_limits_json (JSON, Nullable - e.g., {"daily_reviews": 100})
+-	is_approved (BOOLEAN, Default FALSE)
+-	registration_date (TIMESTAMP, Default CURRENT_TIMESTAMP)
+Admin & System Configuration Tables
+(Tables 29-37 - LLM_Configs, Prompts, Featured_Content, Newsletter_Subscribers, Gamification_Badges, User_Badges_Earned, Messages, Notifications, Languages - remain unchanged, adjusting numbering)
+
+Note: Table numbers have been adjusted due to the addition of Book_Purchase_URLs.
+
+
+Development Roadmap
+This document outlines a phased development roadmap for the AIbookReview.com platform, building from a core MVP to a full-featured ecosystem.
+Phase 0: Proof of Concept (POC)
+* Status: Assumed Foundational / Completed (as per initial requirements.md).
+* Objective: Minimal viable demonstration of core AI-powered manuscript review functionality.
+* Key Focus: Technical feasibility of manuscript processing and basic AI review generation.
+Phase 1: MVP - Core Author & Review Platform (Multilingual AI)
+* Objective: Enable authors to register, upload manuscripts in multiple languages, receive comprehensive AI-powered reviews (including scores and summaries, defaulting to manuscript language), and manage their reviews privately. Establish the foundational database and user management.
+* Key Features:
+o User Management:
+* User Registration (Email & SSO: Google, Microsoft, Facebook).
+* User Login & Authentication.
+* Basic Author Profile Management (Name, Email).
+o Manuscript & Review Process:
+* Manuscript Upload (Supporting .PDF, .docx, .txt, .md - with language detection/selection).
+* AI Manuscript Analysis for multiple languages.
+* AI-Powered Metadata Extraction (Title, Author, Language, Type, ISBN, Keywords).
+* Author Confirmation & Editing of Extracted Metadata.
+* AI Review Generation (Free Tier):
+* Review output defaults to the manuscript's language.
+* AI Quality Score (0-100).
+* Plagiarism Check Summary & Indication.
+* Single-line Book Summary.
+* 100-word Book Summary.
+* AI-Generated Promotional Blurb (approx. 25 words).
+* Single-line Review Summary.
+* Full AI Review Content (Markdown formatted).
+* Downloadable Review Report (e.g., PDF of the results).
+* Review Results Display Screen for Authors.
+* "My Reviews" Overview for Authors (listing their reviews, initially private).
+* "Publish Review" Toggle (Default: Private) - Mechanism for future public sharing.
+o Backend & Admin:
+* Core Database Schema (Users, Books, AI Reviews - including language fields).
+* Basic Admin Panel: User account management, LLM configuration for different languages.
+* Secure manuscript handling (temporary storage during analysis, then deletion).
+Phase 2: Reader Engagement & Public Visibility
+* Objective: Launch the reader-facing side of the platform, allowing authors to make reviews public, and enabling readers to discover, view, and interact with these public reviews (across supported languages). Introduce public author profiles and book purchase links.
+* Key Features:
+o Public Review Ecosystem:
+* Reader Registration & Login (Email & SSO).
+* Public Review Presentation Page (accessible only if review status is "Public").
+* Displays all AI review details, score, summaries, blurb (in the review's language).
+* Link to Public Author Profile.
+* Author control to set Review Visibility (Public/Private) via toggle.
+o Reader Discovery:
+* Reader Review Overview Page:
+* Browse, search, and filter public AI reviews (by score, genre, language, keywords, etc.).
+o Author Enhancement:
+* Public Author Profile Page:
+* Author's Name, Profile Picture.
+* Author CV/Bio (maintained by author).
+* Link to Author's External Website.
+* List of Author's public reviews with key details (including language).
+* Authors can manage "Where to Buy" URLs for their books (displayed on Review Presentation Page).
+o Reader Interaction (Basic):
+* Reader Profile Management (Preferences, preferred languages).
+o Admin:
+* Tools for moderating public content (reviews, author profiles if necessary).
+Phase 3: Service Provider Marketplace & Enhanced Author Transparency
+* Objective: Introduce the Service Provider role and marketplace, allowing authors to find relevant services. Enhance transparency with Author Process Checklists and Author Responses.
+* Key Features:
+o Service Provider Integration:
+* Service Provider Registration & Login.
+* Service Provider Profile Management (Specializations, Portfolio, Rates (optional), Contact Info, languages served).
+* Public Service Provider Directory (Searchable by authors, filter by language).
+* AI-Signaled Service Needs (displayed on author's review results, linking to SP categories/directory).
+o Author Transparency & Control:
+* Author Process Checklist (Authors can detail services used, AI tool usage per book).
+* Checklist summary displayed on the public Review Presentation Page.
+* Author's Response to AI Review (Authors can add their commentary to the AI review).
+* Response displayed on the public Review Presentation Page.
+o Community Foundation (Initial Steps):
+* Basic Reader Reviews on Books (Star ratings & text comments).
+* Foundational Platform Messaging System (e.g., Author-to-Service Provider).
+* Foundational Notification System (for key events like review completion).
+o Admin:
+* Service Provider account approval and management.
+Phase 4: Platform Partner API & Advanced Community Features
+* Objective: Enable integration with self-publishing platforms via a robust API. Introduce advanced features for authors (In-Depth Reviews) and expand community engagement tools.
+* Key Features:
+o Platform Partner Integration (API v1):
+* Platform Partner Registration (Admin-managed).
+* API Key Management for Partners.
+* Core API Endpoints:
+* Retrieve public reviews & details (AI score, blurbs, language, etc.).
+* Retrieve public author profiles.
+* Allow authenticated partners to add/manage "Where to Buy" URLs (with author consent).
+* Allow authenticated partners to update review visibility (with author consent).
+o Advanced Author Features:
+* In-Depth AI Review Option (Paid feature, providing more detailed feedback/action plan - available in supported languages).
+o Blogger/Reviewer Role:
+* Blogger/Reviewer Registration & Profile enhancements.
+* Tools to discover books for review and link their external reviews.
+o Expanded Community Features:
+* Discussion Forums (categorized, potentially language-specific sections).
+* Q&A Session functionality (Author-hosted).
+* User Following (Authors, Bloggers).
+* Reader Bookshelves/Reading Lists.
+o Engagement & Marketplace Enhancements:
+* Gamification (Badges for readers/authors for participation).
+* Service Provider Leads/Opportunities Screen (more direct matching based on AI signals).
+* Authors can review Service Providers they've engaged.
+o Admin:
+* API usage monitoring.
+* Advanced content moderation tools.
+* Community management tools (forum moderation, Q&A setup).
+Phase 5: Ecosystem Maturity & UI Internationalization
+* Objective: Expand the platform's reach with full UI translation and solidify its position as a comprehensive ecosystem with advanced analytics and refined features.
+* Key Features:
+o UI Internationalization:
+* Multilingual User Interface (translating all platform text, labels, buttons).
+* Regional content considerations and management.
+o Advanced Platform Features:
+* Newsletter system & Featured Content Management (by Admin).
+* Enhanced Analytics & Reporting (for Admins; potentially dashboards for Authors/Partners).
+* Advanced API capabilities for Partners (e.g., talent scouting data, webhooks for notifications).
+o Mobile Experience:
+* Full mobile responsiveness of the web platform.
+* (Consideration for future dedicated mobile apps).
+o Continuous Improvement:
+* Ongoing AI Model refinement and training (for all supported languages).
+* Introduction of new AI-driven insights or features.
+* Regular security audits and performance optimization.
+Ongoing Activities (Across All Phases)
+* Security: Regular audits, vulnerability patching, data protection measures.
+* Performance & Scalability: Monitoring and optimizing platform speed and capacity.
+* Maintenance: Bug fixes, dependency updates.
+* User Support: Help documentation, customer service channels (potentially multilingual support later).
+* Admin Tool Enhancements: Continuously improving tools for platform management.
+* Legal & Compliance: Ensuring adherence to GDPR and other relevant regulations.
+This roadmap provides a structured approach to developing AIbookReview.com. Each phase builds upon the last, delivering increasing value to users and stakeholders. The timelines for these phases would depend on team size, resources, and development velocity.
+
+
+
+Graphical User Interface (GUI)
+Based on analyzing www.Bookmundo.com design, here are the key design and user experience elements that characterize their look-and-feel:
+Overall Design
+1. Clean and Modern Design 1
+- Minimalist layout with clear sections
+- Professional white background with strategic use of color for CTAs
+- Easy-to-read typography
+- Emphasis on book covers and visual content
+2. User-Friendly Navigation
+- Intuitive menu structure
+- Clear calls-to-action (CTAs)
+- Step-by-step process presentation
+- Straightforward pricing information
+3. Content Organization 1
+- Well-structured information hierarchy
+- Clear separation between different services (publishing, printing, selling)
+- Prominent display of key features and benefits
+- Easy access to important tools and resources
+4. Key Features Highlighted
+- Prominent book creation and publishing tools
+- Clear pricing calculator
+- Easy-to-understand royalty structure
+- Personal webshop features
+5. Professional Yet Approachable Tone 1
+- Welcoming and encouraging messaging
+- Focus on empowering authors
+- Clear value proposition
+- Professional but not intimidating
+This design approach creates a platform that feels professional and reliable while remaining accessible and user-friendly - perfect for a service aimed at both experienced and first-time authors. 
+Color scheme
+Based on analyzing Bookmundo's website, here's their color scheme breakdown :
+
+1. Primary Colors
+- White (#FFFFFF) - Main background color
+- Dark Blue (#2e36d1) - Primary brand color used in headers and important elements
+- Light Gray (#F2F2F2) - Secondary background color for alternating sections
+2. Accent Colors
+- Orange/Coral (#E07C4F) - Call-to-action buttons and highlighted elements
+- Light Blue (#90a3f0) - Secondary accent for links and interactive elements
+3. Text Colors
+- Dark Gray (#333333) - Primary text color
+- Medium Gray (#666666) - Secondary text color
+- White (#FFFFFF) - Text on dark backgrounds
+4. Usage Pattern
+- Clean white background dominates the layout
+- Dark blue provides professional contrast
+- Orange/coral accents draw attention to important actions
+- Light grays create subtle section separations
+- Light blue offers gentle interactive highlights
+This color scheme creates a professional yet approachable feel, balancing business credibility with user-friendly warmth.
+

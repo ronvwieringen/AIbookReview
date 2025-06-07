@@ -90,48 +90,77 @@ export default function ManuscriptUploadPage() {
   }
 
   const handleFileUpload = async (file: File, language: string) => {
-    setIsProcessing(true)
+    setIsProcessing(true);
+
+    const formData = new FormData();
+    formData.append("manuscript_file", file);
+    // If your backend expects the language as part of the form data, append it as well
+    // formData.append("language", language); // Or however your backend expects it
 
     try {
-      // Simulate file upload and metadata extraction
-      await new Promise((resolve) => setTimeout(resolve, 2000))
+      // Using a relative URL assuming Next.js proxy or same origin deployment.
+      // If backend is on a different port (e.g., 8000) and Next.js on 3000, and no proxy is set up:
+      // const response = await fetch("http://localhost:8000/api/v1/manuscripts/upload-anonymous/", {
+      const response = await fetch("/api/v1/manuscripts/upload-anonymous/", {
+        method: "POST",
+        body: formData,
+        // Headers are not strictly necessary for FormData with fetch, 
+        // as the browser will set Content-Type to multipart/form-data automatically.
+        // headers: {
+        //   'Accept': 'application/json',
+        // },
+      });
+
+      if (!response.ok) {
+        let errorData;
+        try {
+          errorData = await response.json();
+        } catch (e) {
+          errorData = { detail: response.statusText };
+        }
+        throw new Error(errorData.detail || `HTTP error! status: ${response.status}`);
+      }
+
+      const result = await response.json(); // This is the BookWithReviews schema response
 
       const uploadedFileData: UploadedFile = {
-        file,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        language,
-      }
+        file, 
+        name: file.name, 
+        size: file.size, 
+        type: file.type, 
+        language: result.Language?.Name || language, 
+      };
 
-      // Simulate AI metadata extraction
-      const mockMetadata: ExtractedMetadata = {
-        title: "The Digital Nomad's Guide to Freedom",
-        author: "Sarah Chen",
-        language: language,
-        bookType: "Non-Fiction",
-        isbn: "",
-        keywords: ["digital nomad", "remote work", "entrepreneurship", "lifestyle design", "freedom"],
-      }
+      const aiReviewData = result.ai_reviews && result.ai_reviews.length > 0 ? result.ai_reviews[0] : null;
 
-      setUploadedFile(uploadedFileData)
-      setExtractedMetadata(mockMetadata)
-      setCurrentStep(2)
+      const extractedData: ExtractedMetadata = {
+        title: aiReviewData?.GeneratedTitle || result.Title || "Title not found",
+        author: "Anonymous", // For anonymous uploads, author is not sent from frontend initially
+        language: result.Language?.Name || language,
+        bookType: aiReviewData?.GeneratedGenre || result.Genre?.Name || "Unknown",
+        isbn: result.ISBN || "",
+        keywords: aiReviewData?.GeneratedKeywords ? aiReviewData.GeneratedKeywords.split(',').map((k: string) => k.trim()) : [],
+      };
+      
+      setUploadedFile(uploadedFileData);
+      setExtractedMetadata(extractedData); 
+      setCurrentStep(2);
 
       toast({
         title: "File Uploaded Successfully",
-        description: "Metadata has been extracted from your manuscript.",
-      })
-    } catch (error) {
+        description: "Your manuscript has been uploaded and initial metadata processed.",
+      });
+    } catch (error: any) {
+      console.error("Upload failed:", error);
       toast({
         title: "Upload Failed",
-        description: "There was an error uploading your file. Please try again.",
+        description: error.message || "Could not upload the manuscript. Please try again.",
         variant: "destructive",
-      })
+      });
     } finally {
-      setIsProcessing(false)
+      setIsProcessing(false);
     }
-  }
+  };
 
   const handleMetadataConfirm = async (metadata: ExtractedMetadata) => {
     setIsProcessing(true)
