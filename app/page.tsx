@@ -239,22 +239,7 @@ export default function Home() {
           </div>
         </section>
 
-        {/* CTA Section */}
-        <section className="py-16 bg-[#2A4759] text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Transform Your Publishing Journey?</h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto">
-              Join AIbookReview today and experience the future of self-publishing with AI-powered quality assessment,
-              community support, and enhanced discoverability.
-            </p>
-            <Link href="/reviews">
-              <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white text-lg py-6 px-8">
-                Get Started Free
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
-          </div>
-        </section>
+     
       </main>
 
       <Footer />
