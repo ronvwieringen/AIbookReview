@@ -1,8 +1,7 @@
 import { NextAuthOptions } from "next-auth";
-import { NextResponse } from "next/server";
 import NextAuth from "next-auth/next";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { supabase } from "@/lib/db";
+import { signIn, getUserByEmail } from "@/lib/auth";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,39 +17,19 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          // Authenticate with Supabase Auth
-          const { data, error } = await supabase.auth.signInWithPassword({
-            email: credentials.email,
-            password: credentials.password,
-          });
+          const result = await signIn(credentials.email, credentials.password);
 
-          if (error || !data.user) {
+          if (!result.success || !result.data?.user) {
             return null;
           }
 
-          // Get user profile from the database
-          const { data: userProfile, error: userError } = await supabase
-            .from('users')
-            .select('*')
-            .eq('id', data.user.id)
-            .single();
-
-          if (userError || !userProfile) {
-            return null;
-          }
-
-          // Update last login timestamp
-          await supabase
-            .from('users')
-            .update({ last_login: new Date().toISOString() })
-            .eq('id', data.user.id);
+          const user = result.data.user;
 
           return {
-            id: data.user.id,
-            email: data.user.email,
-            name: `${userProfile.first_name || ''} ${userProfile.last_name || ''}`.trim() || data.user.email,
-            role: userProfile.role,
-            image: userProfile.profile_picture_url,
+            id: user.id,
+            email: user.email,
+            name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.email,
+            role: user.role,
           };
         } catch (error) {
           console.error("Authentication error:", error);
@@ -83,7 +62,7 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: process.env.NEXTAUTH_SECRET || "your-secret-key-change-in-production",
 };
 
 const handler = NextAuth(authOptions);

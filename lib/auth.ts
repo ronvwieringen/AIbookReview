@@ -1,5 +1,6 @@
-import { supabase } from './db';
-import { User } from './db';
+import { compare, hash } from 'bcryptjs';
+import { v4 as uuidv4 } from 'uuid';
+import { run, get, all } from './db';
 
 export type AuthUser = {
   id: string;
@@ -11,65 +12,46 @@ export type AuthUser = {
 
 export async function signUp(email: string, password: string, role: string) {
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          role,
-        },
-      },
-    });
+    // Check if user already exists
+    const existingUser = await get(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
 
-    if (error) {
-      throw error;
+    if (existingUser) {
+      return { success: false, error: 'User already exists' };
     }
 
-    // Create a record in the users table
-    if (data.user) {
-      const { error: profileError } = await supabase
-        .from('users')
-        .insert({
-          id: data.user.id,
-          email: data.user.email,
-          role: role,
-          is_active: true,
-          is_verified: false,
-        });
+    // Hash the password
+    const passwordHash = await hash(password, 10);
+    
+    // Generate a unique ID
+    const userId = uuidv4();
 
-      if (profileError) {
-        throw profileError;
-      }
+    // Create user record
+    await run(
+      'INSERT INTO users (id, email, password_hash, role, is_active, is_verified) VALUES (?, ?, ?, ?, ?, ?)',
+      [userId, email, passwordHash, role, 1, 0]
+    );
 
-      // If role is Author, create a record in the authors table
-      if (role === 'Author') {
-        const { error: authorError } = await supabase
-          .from('authors')
-          .insert({
-            id: data.user.id,
-          });
-
-        if (authorError) {
-          throw authorError;
-        }
-      }
-
-      // If role is ServiceProvider, create a record in the service_providers table
-      if (role === 'ServiceProvider') {
-        const { error: serviceProviderError } = await supabase
-          .from('service_providers')
-          .insert({
-            id: data.user.id,
-            verification_status: 'Unverified',
-          });
-
-        if (serviceProviderError) {
-          throw serviceProviderError;
-        }
-      }
+    // If role is Author, create a record in the authors table
+    if (role === 'Author') {
+      await run(
+        'INSERT INTO authors (id) VALUES (?)',
+        [userId]
+      );
     }
 
-    return { success: true, data };
+    return { 
+      success: true, 
+      data: { 
+        user: { 
+          id: userId, 
+          email, 
+          role 
+        } 
+      } 
+    };
   } catch (error) {
     console.error('Error signing up:', error);
     return { success: false, error };
@@ -78,108 +60,143 @@ export async function signUp(email: string, password: string, role: string) {
 
 export async function signIn(email: string, password: string) {
   try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    // Get user by email
+    const user = await get(
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
 
-    if (error) {
-      throw error;
+    if (!user) {
+      return { success: false, error: 'Invalid credentials' };
+    }
+
+    // Verify password
+    const isPasswordValid = await compare(password, user.password_hash);
+    if (!isPasswordValid) {
+      return { success: false, error: 'Invalid credentials' };
     }
 
     // Update last login timestamp
-    if (data.user) {
-      const { error: updateError } = await supabase
-        .from('users')
-        .update({ last_login: new Date().toISOString() })
-        .eq('id', data.user.id);
+    await run(
+      'UPDATE users SET updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [user.id]
+    );
 
-      if (updateError) {
-        console.error('Error updating last login:', updateError);
-      }
-    }
-
-    return { success: true, data };
+    return { 
+      success: true, 
+      data: { 
+        user: { 
+          id: user.id, 
+          email: user.email, 
+          role: user.role,
+          firstName: user.first_name,
+          lastName: user.last_name
+        } 
+      } 
+    };
   } catch (error) {
     console.error('Error signing in:', error);
     return { success: false, error };
   }
 }
 
-export async function signOut() {
+export async function getUserById(id: string): Promise<AuthUser | null> {
   try {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      throw error;
-    }
-    return { success: true };
-  } catch (error) {
-    console.error('Error signing out:', error);
-    return { success: false, error };
-  }
-}
+    const user = await get(
+      'SELECT id, email, role, first_name, last_name FROM users WHERE id = ?',
+      [id]
+    );
 
-export async function getCurrentUser(): Promise<AuthUser | null> {
-  try {
-    const { data: { session }, error } = await supabase.auth.getSession();
-    
-    if (error || !session) {
-      return null;
-    }
-
-    const { data: userData, error: userError } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', session.user.id)
-      .single();
-
-    if (userError || !userData) {
+    if (!user) {
       return null;
     }
 
     return {
-      id: userData.id,
-      email: userData.email,
-      role: userData.role,
-      firstName: userData.first_name,
-      lastName: userData.last_name,
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.first_name,
+      lastName: user.last_name
     };
   } catch (error) {
-    console.error('Error getting current user:', error);
+    console.error('Error getting user by ID:', error);
     return null;
   }
 }
 
-export async function resetPassword(email: string) {
+export async function getUserByEmail(email: string): Promise<AuthUser | null> {
   try {
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/reset-password`,
-    });
+    const user = await get(
+      'SELECT id, email, role, first_name, last_name FROM users WHERE email = ?',
+      [email]
+    );
 
-    if (error) {
-      throw error;
+    if (!user) {
+      return null;
     }
+
+    return {
+      id: user.id,
+      email: user.email,
+      role: user.role,
+      firstName: user.first_name,
+      lastName: user.last_name
+    };
+  } catch (error) {
+    console.error('Error getting user by email:', error);
+    return null;
+  }
+}
+
+export async function updateUserProfile(userId: string, userData: any) {
+  try {
+    const { firstName, lastName, bio, profilePictureUrl, preferredLanguage } = userData;
+    
+    await run(
+      `UPDATE users SET 
+        first_name = COALESCE(?, first_name), 
+        last_name = COALESCE(?, last_name), 
+        bio = COALESCE(?, bio), 
+        profile_picture_url = COALESCE(?, profile_picture_url), 
+        preferred_language = COALESCE(?, preferred_language),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE id = ?`,
+      [firstName, lastName, bio, profilePictureUrl, preferredLanguage, userId]
+    );
 
     return { success: true };
   } catch (error) {
-    console.error('Error resetting password:', error);
+    console.error('Error updating user profile:', error);
     return { success: false, error };
   }
 }
 
-export async function updatePassword(password: string) {
+export async function updatePassword(userId: string, newPassword: string) {
   try {
-    const { error } = await supabase.auth.updateUser({
-      password,
-    });
-
-    if (error) {
-      throw error;
-    }
+    const passwordHash = await hash(newPassword, 10);
+    
+    await run(
+      'UPDATE users SET password_hash = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [passwordHash, userId]
+    );
 
     return { success: true };
   } catch (error) {
     console.error('Error updating password:', error);
+    return { success: false, error };
+  }
+}
+
+export async function verifyUser(userId: string) {
+  try {
+    await run(
+      'UPDATE users SET is_verified = 1, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [userId]
+    );
+
+    return { success: true };
+  } catch (error) {
+    console.error('Error verifying user:', error);
     return { success: false, error };
   }
 }
