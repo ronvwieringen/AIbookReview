@@ -148,6 +148,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                   <div className="text-sm text-gray-500">or click to browse files</div>
                 </div>
                 <div className="text-xs text-gray-400">Supports PDF, DOCX, TXT, MD • Max 50MB</div>
+                <div className="text-xs text-gray-400">NOTE: we will only store the review, not the manuscript</div>
               </div>
             )}
           </div>
