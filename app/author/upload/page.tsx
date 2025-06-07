@@ -50,7 +50,6 @@ export interface UploadedFile {
   name: string
   size: number
   type: string
-  wordCount: number
 }
 
 export interface ExtractedMetadata {
@@ -60,7 +59,6 @@ export interface ExtractedMetadata {
   bookType: string
   isbn: string
   keywords: string[]
-  wordCount: number
 }
 
 export default function ManuscriptUploadPage() {
@@ -90,7 +88,7 @@ export default function ManuscriptUploadPage() {
     }
   }
 
-  const handleFileUpload = async (file: File, wordCount: number) => {
+  const handleFileUpload = async (file: File) => {
     setIsProcessing(true)
 
     try {
@@ -102,18 +100,16 @@ export default function ManuscriptUploadPage() {
         name: file.name,
         size: file.size,
         type: file.type,
-        wordCount,
       }
 
-      // Simulate AI metadata extraction with language detection
+      // Simulate AI metadata extraction
       const mockMetadata: ExtractedMetadata = {
         title: "The Digital Nomad's Guide to Freedom",
         author: "Sarah Chen",
-        language: "English", // This would be detected by AI
+        language: "English",
         bookType: "Non-Fiction",
         isbn: "",
         keywords: ["digital nomad", "remote work", "entrepreneurship", "lifestyle design", "freedom"],
-        wordCount,
       }
 
       setUploadedFile(uploadedFileData)
@@ -122,7 +118,7 @@ export default function ManuscriptUploadPage() {
 
       toast({
         title: "File Uploaded Successfully",
-        description: `Metadata extracted from your ${wordCount.toLocaleString()}-word manuscript. Language detected: ${mockMetadata.language}`,
+        description: "Metadata has been extracted from your manuscript.",
       })
     } catch (error) {
       toast({
@@ -188,7 +184,7 @@ export default function ManuscriptUploadPage() {
           <h1 className="text-3xl font-bold text-[#2A4759] mb-4">Upload Your Manuscript</h1>
           <p className="text-gray-600 max-w-2xl mx-auto">
             Get comprehensive AI-powered feedback on your manuscript. Our analysis includes quality assessment,
-            plagiarism detection, language detection, and actionable improvement suggestions.
+            plagiarism detection, and actionable improvement suggestions.
           </p>
         </div>
 
@@ -276,8 +272,7 @@ export default function ManuscriptUploadPage() {
                   <li>• Plot structure and pacing</li>
                   <li>• Character development</li>
                   <li>• Plagiarism detection</li>
-                  <li>• Language detection</li>
-                  <li>• Word count and reading time</li>
+                  <li>• Genre-specific feedback</li>
                 </ul>
               </div>
             </div>

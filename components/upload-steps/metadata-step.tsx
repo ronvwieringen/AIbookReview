@@ -7,8 +7,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Edit3, CheckCircle, ArrowLeft, X, BookOpen } from "lucide-react"
-import { getEstimatedReadingTime, getManuscriptCategory } from "@/lib/word-counter"
+import { Edit3, CheckCircle, ArrowLeft, X } from "lucide-react"
 import type { ExtractedMetadata } from "@/app/author/upload/page"
 
 interface MetadataStepProps {
@@ -33,21 +32,11 @@ const bookTypes = [
   "Other",
 ]
 
-const supportedLanguages = [
-  { code: "en", name: "English" },
-  { code: "nl", name: "Dutch" },
-  { code: "de", name: "German" },
-  { code: "fr", name: "French" },
-  { code: "es", name: "Spanish" },
-  { code: "it", name: "Italian" },
-  { code: "pt", name: "Portuguese" },
-]
-
 export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing }: MetadataStepProps) {
   const [editedMetadata, setEditedMetadata] = useState<ExtractedMetadata>(metadata)
   const [newKeyword, setNewKeyword] = useState("")
 
-  const handleInputChange = (field: keyof ExtractedMetadata, value: string | number) => {
+  const handleInputChange = (field: keyof ExtractedMetadata, value: string) => {
     setEditedMetadata((prev) => ({
       ...prev,
       [field]: value,
@@ -105,25 +94,6 @@ export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing
         </CardContent>
       </Card>
 
-      {/* Word Count Summary */}
-      {editedMetadata.wordCount > 0 && (
-        <Card className="bg-blue-50 border-blue-200">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-3">
-              <BookOpen className="h-6 w-6 text-blue-600" />
-              <div>
-                <div className="font-semibold text-blue-800">
-                  {editedMetadata.wordCount.toLocaleString()} words
-                </div>
-                <div className="text-sm text-blue-600">
-                  {getManuscriptCategory(editedMetadata.wordCount)} • {getEstimatedReadingTime(editedMetadata.wordCount)}
-                </div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Basic Information */}
       <Card>
         <CardHeader>
@@ -159,18 +129,16 @@ export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
               <Label htmlFor="language">Language *</Label>
-              <Select value={editedMetadata.language} onValueChange={(value) => handleInputChange("language", value)}>
-                <SelectTrigger className="mt-1">
-                  <SelectValue placeholder="Select language" />
-                </SelectTrigger>
-                <SelectContent>
-                  {supportedLanguages.map((lang) => (
-                    <SelectItem key={lang.code} value={lang.code}>
-                      {lang.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <Input
+                id="language"
+                value={editedMetadata.language}
+                onChange={(e) => handleInputChange("language", e.target.value)}
+                placeholder="e.g., English, Dutch, German"
+                className="mt-1"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                This will be automatically detected during AI analysis
+              </p>
             </div>
             <div>
               <Label htmlFor="bookType">Book Type *</Label>
