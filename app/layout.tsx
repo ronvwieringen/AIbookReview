@@ -1,10 +1,12 @@
 import type { Metadata } from 'next'
+import { Providers } from '@/components/providers'
+import { Toaster } from '@/components/ui/toaster'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'AIbookReview - AI-Powered Book Reviews',
+  description: 'Discover quality self-published books with AI-powered reviews and transparent quality assessment.',
+  generator: 'Next.js',
 }
 
 export default function RootLayout({
@@ -14,7 +16,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Providers>
+          {children}
+          <Toaster />
+        </Providers>
+      </body>
     </html>
   )
 }

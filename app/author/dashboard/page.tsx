@@ -41,6 +41,9 @@
 "use client"
 
 import { useState } from "react"
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -66,8 +69,32 @@ import PerformanceChart from "@/components/dashboard/performance-chart"
 import { getAuthorDashboardData } from "@/lib/author-dashboard-data"
 
 export default function AuthorDashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
   const [selectedTimeframe, setSelectedTimeframe] = useState("30d")
   const dashboardData = getAuthorDashboardData()
+
+  useEffect(() => {
+    if (status === "loading") return // Still loading
+
+    if (!session) {
+      router.push("/login")
+      return
+    }
+
+    if (session.user.role !== "Author" && session.user.role !== "PlatformAdmin") {
+      router.push("/")
+      return
+    }
+  }, [session, status, router])
+
+  if (status === "loading") {
+    return <div>Loading...</div>
+  }
+
+  if (!session || (session.user.role !== "Author" && session.user.role !== "PlatformAdmin")) {
+    return null
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">

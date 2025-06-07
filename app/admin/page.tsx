@@ -18,6 +18,11 @@
  * moderation, and platform settings.
  */
 
+"use client"
+
+import { useSession } from "next-auth/react"
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -39,6 +44,31 @@ import {
 } from "lucide-react"
 
 export default function AdminDashboard() {
+  const { data: session, status } = useSession()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (status === "loading") return // Still loading
+
+    if (!session) {
+      router.push("/login")
+      return
+    }
+
+    if (session.user.role !== "PlatformAdmin") {
+      router.push("/")
+      return
+    }
+  }, [session, status, router])
+
+  if (status === "loading") {
+    return <div>Loading...</div>
+  }
+
+  if (!session || session.user.role !== "PlatformAdmin") {
+    return null
+  }
+
   // Mock data - in real implementation, this would come from API calls
   const stats = {
     totalUsers: 1247,
