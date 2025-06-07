@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
-import { run, all } from "@/lib/db";
+import { run, all, get } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -188,13 +188,21 @@ export async function POST(request: NextRequest) {
     );
 
     return NextResponse.json(
-      { success: true, message: 'Database seeded successfully' },
+      { 
+        success: true, 
+        message: 'Database seeded successfully',
+        users: {
+          admin: { email: 'admin@aibookreview.com', password: 'admin123' },
+          author: { email: 'sarah@example.com', password: 'author123' },
+          reader: { email: 'reader@example.com', password: 'reader123' }
+        }
+      },
       { status: 200 }
     );
   } catch (error) {
     console.error('Error in POST /api/seed:', error);
     return NextResponse.json(
-      { error: 'Failed to seed database' },
+      { error: 'Failed to seed database', details: error.message },
       { status: 500 }
     );
   }
