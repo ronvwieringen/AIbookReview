@@ -6,11 +6,12 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-import { Upload, FileText, AlertCircle, CheckCircle } from "lucide-react"
+import { Upload, FileText, AlertCircle, CheckCircle, BookOpen } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
+import { extractTextFromFile, countWords, getEstimatedReadingTime, getManuscriptCategory } from "@/lib/word-counter"
 
 interface UploadStepProps {
-  onFileUpload: (file: File, language: string) => void
+  onFileUpload: (file: File, language: string, wordCount: number) => void
   isProcessing: boolean
 }
 
@@ -34,11 +35,37 @@ const acceptedFileTypes = {
 export default function UploadStep({ onFileUpload, isProcessing }: UploadStepProps) {
   const { toast } = useToast()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("")
+  const [selectedLanguage, setSelectedLanguage] = useState<string>("en")
   const [uploadError, setUploadError] = useState<string>("")
+  const [wordCount, setWordCount] = useState<number>(0)
+  const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
+
+  const analyzeFile = async (file: File) => {
+    setIsAnalyzing(true)
+    try {
+      const text = await extractTextFromFile(file)
+      const count = countWords(text)
+      setWordCount(count)
+      
+      toast({
+        title: "File Analyzed",
+        description: `Found ${count.toLocaleString()} words in your manuscript.`,
+      })
+    } catch (error) {
+      console.error('Error analyzing file:', error)
+      toast({
+        title: "Analysis Warning",
+        description: "Could not count words in this file, but you can still proceed.",
+        variant: "destructive",
+      })
+      setWordCount(0)
+    } finally {
+      setIsAnalyzing(false)
+    }
+  }
 
   const onDrop = useCallback(
-    (acceptedFiles: File[], rejectedFiles: any[]) => {
+    async (acceptedFiles: File[], rejectedFiles: any[]) => {
       setUploadError("")
 
       if (rejectedFiles.length > 0) {
@@ -61,6 +88,9 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         if (!selectedLanguage) {
           setSelectedLanguage("en")
         }
+
+        // Analyze the file for word count
+        await analyzeFile(file)
 
         toast({
           title: "File Selected",
@@ -89,7 +119,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
       return
     }
 
-    onFileUpload(selectedFile, selectedLanguage)
+    onFileUpload(selectedFile, selectedLanguage, wordCount)
   }
 
   const formatFileSize = (bytes: number) => {
@@ -126,6 +156,14 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                 <div>
                   <div className="font-semibold text-green-800">{selectedFile.name}</div>
                   <div className="text-sm text-green-600">{formatFileSize(selectedFile.size)}</div>
+                  {isAnalyzing && (
+                    <div className="text-sm text-blue-600 mt-2">Analyzing content...</div>
+                  )}
+                  {wordCount > 0 && !isAnalyzing && (
+                    <div className="text-sm text-green-600 mt-2">
+                      {wordCount.toLocaleString()} words • {getEstimatedReadingTime(wordCount)}
+                    </div>
+                  )}
                 </div>
                 <Button
                   variant="outline"
@@ -133,6 +171,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                   onClick={(e) => {
                     e.stopPropagation()
                     setSelectedFile(null)
+                    setWordCount(0)
                   }}
                 >
                   Choose Different File
@@ -162,7 +201,32 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         </CardContent>
       </Card>
 
-      
+      {/* Language Selection */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-[#2A4759]">Manuscript Language</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-3">
+            <Label htmlFor="language-select">Select the primary language of your manuscript</Label>
+            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+              <SelectTrigger id="language-select">
+                <SelectValue placeholder="Choose language..." />
+              </SelectTrigger>
+              <SelectContent>
+                {supportedLanguages.map((lang) => (
+                  <SelectItem key={lang.code} value={lang.code}>
+                    {lang.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-gray-500">
+              This helps our AI provide more accurate analysis and feedback in the appropriate language.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
       {/* File Information */}
       {selectedFile && (
@@ -170,7 +234,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
           <CardHeader>
             <CardTitle className="flex items-center text-[#2A4759]">
               <FileText className="h-5 w-5 mr-2" />
-              File Information
+              Manuscript Analysis
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -184,10 +248,6 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                 <div className="text-gray-600">{formatFileSize(selectedFile.size)}</div>
               </div>
               <div>
-                <div className="font-medium text-gray-700">File Type</div>
-                <div className="text-gray-600">{selectedFile.type || "Unknown"}</div>
-              </div>
-              <div>
                 <div className="font-medium text-gray-700">Language</div>
                 <div className="text-gray-600">
                   {selectedLanguage
@@ -195,7 +255,36 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                     : "Not selected"}
                 </div>
               </div>
+              <div>
+                <div className="font-medium text-gray-700">Word Count</div>
+                <div className="text-gray-600">
+                  {isAnalyzing ? (
+                    "Analyzing..."
+                  ) : wordCount > 0 ? (
+                    <span className="flex items-center gap-1">
+                      <BookOpen className="h-4 w-4" />
+                      {wordCount.toLocaleString()} words
+                    </span>
+                  ) : (
+                    "Not analyzed"
+                  )}
+                </div>
+              </div>
             </div>
+            
+            {wordCount > 0 && !isAnalyzing && (
+              <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                <div className="text-sm">
+                  <div className="font-medium text-blue-800 mb-1">Manuscript Details:</div>
+                  <div className="text-blue-700">
+                    • Category: {getManuscriptCategory(wordCount)}
+                  </div>
+                  <div className="text-blue-700">
+                    • Estimated reading time: {getEstimatedReadingTime(wordCount)}
+                  </div>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       )}
@@ -204,10 +293,10 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
       <div className="flex justify-center">
         <Button
           onClick={handleUpload}
-          disabled={!selectedFile || !selectedLanguage || isProcessing}
+          disabled={!selectedFile || !selectedLanguage || isProcessing || isAnalyzing}
           className="bg-[#F79B72] hover:bg-[#e68a61] text-white px-8"
         >
-          {isProcessing ? "Uploading..." : "Upload & Extract Metadata"}
+          {isProcessing ? "Uploading..." : isAnalyzing ? "Analyzing..." : "Upload & Extract Metadata"}
         </Button>
       </div>
     </div>

@@ -51,6 +51,7 @@ export interface UploadedFile {
   size: number
   type: string
   language: string
+  wordCount: number
 }
 
 export interface ExtractedMetadata {
@@ -60,6 +61,7 @@ export interface ExtractedMetadata {
   bookType: string
   isbn: string
   keywords: string[]
+  wordCount: number
 }
 
 export default function ManuscriptUploadPage() {
@@ -89,7 +91,7 @@ export default function ManuscriptUploadPage() {
     }
   }
 
-  const handleFileUpload = async (file: File, language: string) => {
+  const handleFileUpload = async (file: File, language: string, wordCount: number) => {
     setIsProcessing(true)
 
     try {
@@ -102,6 +104,7 @@ export default function ManuscriptUploadPage() {
         size: file.size,
         type: file.type,
         language,
+        wordCount,
       }
 
       // Simulate AI metadata extraction
@@ -112,6 +115,7 @@ export default function ManuscriptUploadPage() {
         bookType: "Non-Fiction",
         isbn: "",
         keywords: ["digital nomad", "remote work", "entrepreneurship", "lifestyle design", "freedom"],
+        wordCount,
       }
 
       setUploadedFile(uploadedFileData)
@@ -120,7 +124,7 @@ export default function ManuscriptUploadPage() {
 
       toast({
         title: "File Uploaded Successfully",
-        description: "Metadata has been extracted from your manuscript.",
+        description: `Metadata extracted from your ${wordCount.toLocaleString()}-word manuscript.`,
       })
     } catch (error) {
       toast({
@@ -275,6 +279,7 @@ export default function ManuscriptUploadPage() {
                   <li>• Character development</li>
                   <li>• Plagiarism detection</li>
                   <li>• Genre-specific feedback</li>
+                  <li>• Word count and reading time</li>
                 </ul>
               </div>
             </div>

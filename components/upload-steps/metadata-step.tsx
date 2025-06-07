@@ -7,7 +7,8 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Edit3, CheckCircle, ArrowLeft, X } from "lucide-react"
+import { Edit3, CheckCircle, ArrowLeft, X, BookOpen } from "lucide-react"
+import { getEstimatedReadingTime, getManuscriptCategory } from "@/lib/word-counter"
 import type { ExtractedMetadata } from "@/app/author/upload/page"
 
 interface MetadataStepProps {
@@ -46,7 +47,7 @@ export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing
   const [editedMetadata, setEditedMetadata] = useState<ExtractedMetadata>(metadata)
   const [newKeyword, setNewKeyword] = useState("")
 
-  const handleInputChange = (field: keyof ExtractedMetadata, value: string) => {
+  const handleInputChange = (field: keyof ExtractedMetadata, value: string | number) => {
     setEditedMetadata((prev) => ({
       ...prev,
       [field]: value,
@@ -103,6 +104,25 @@ export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing
           </div>
         </CardContent>
       </Card>
+
+      {/* Word Count Summary */}
+      {editedMetadata.wordCount > 0 && (
+        <Card className="bg-blue-50 border-blue-200">
+          <CardContent className="p-4">
+            <div className="flex items-center gap-3">
+              <BookOpen className="h-6 w-6 text-blue-600" />
+              <div>
+                <div className="font-semibold text-blue-800">
+                  {editedMetadata.wordCount.toLocaleString()} words
+                </div>
+                <div className="text-sm text-blue-600">
+                  {getManuscriptCategory(editedMetadata.wordCount)} • {getEstimatedReadingTime(editedMetadata.wordCount)}
+                </div>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Basic Information */}
       <Card>
