@@ -56,7 +56,7 @@ export default function AuthorDashboardNav() {
         <div className="flex items-center space-x-4">
           {session ? (
             <>
-              <Button variant="ghost" size="sm">
+              <Button variant="ghost\" size="sm">
                 <MessageSquare className="h-4 w-4" />
               </Button>
               <Button variant="ghost" size="sm">
