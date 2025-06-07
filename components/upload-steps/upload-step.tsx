@@ -4,26 +4,15 @@ import { useState, useCallback } from "react"
 import { useDropzone } from "react-dropzone"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Upload, FileText, AlertCircle, CheckCircle, BookOpen } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { extractTextFromFile, countWords, getEstimatedReadingTime, getManuscriptCategory } from "@/lib/word-counter"
 
 interface UploadStepProps {
-  onFileUpload: (file: File, language: string, wordCount: number) => void
+  onFileUpload: (file: File, wordCount: number) => void
   isProcessing: boolean
 }
-
-const supportedLanguages = [
-  { code: "en", name: "English" },
-  { code: "nl", name: "Dutch" },
-  { code: "de", name: "German" },
-  { code: "fr", name: "French" },
-  { code: "es", name: "Spanish" },
-  { code: "it", name: "Italian" },
-  { code: "pt", name: "Portuguese" },
-]
 
 const acceptedFileTypes = {
   "application/pdf": [".pdf"],
@@ -35,7 +24,6 @@ const acceptedFileTypes = {
 export default function UploadStep({ onFileUpload, isProcessing }: UploadStepProps) {
   const { toast } = useToast()
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [selectedLanguage, setSelectedLanguage] = useState<string>("en")
   const [uploadError, setUploadError] = useState<string>("")
   const [wordCount, setWordCount] = useState<number>(0)
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false)
@@ -84,11 +72,6 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         const file = acceptedFiles[0]
         setSelectedFile(file)
 
-        // Auto-detect language based on filename or default to English
-        if (!selectedLanguage) {
-          setSelectedLanguage("en")
-        }
-
         // Analyze the file for word count
         await analyzeFile(file)
 
@@ -98,7 +81,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         })
       }
     },
-    [selectedLanguage, toast],
+    [toast],
   )
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -114,12 +97,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
       return
     }
 
-    if (!selectedLanguage) {
-      setUploadError("Please select the manuscript language.")
-      return
-    }
-
-    onFileUpload(selectedFile, selectedLanguage, wordCount)
+    onFileUpload(selectedFile, wordCount)
   }
 
   const formatFileSize = (bytes: number) => {
@@ -201,33 +179,6 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
         </CardContent>
       </Card>
 
-      {/* Language Selection */}
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-[#2A4759]">Manuscript Language</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-3">
-            <Label htmlFor="language-select">Select the primary language of your manuscript</Label>
-            <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
-              <SelectTrigger id="language-select">
-                <SelectValue placeholder="Choose language..." />
-              </SelectTrigger>
-              <SelectContent>
-                {supportedLanguages.map((lang) => (
-                  <SelectItem key={lang.code} value={lang.code}>
-                    {lang.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-gray-500">
-              This helps our AI provide more accurate analysis and feedback in the appropriate language.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
-
       {/* File Information */}
       {selectedFile && (
         <Card>
@@ -248,14 +199,6 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                 <div className="text-gray-600">{formatFileSize(selectedFile.size)}</div>
               </div>
               <div>
-                <div className="font-medium text-gray-700">Language</div>
-                <div className="text-gray-600">
-                  {selectedLanguage
-                    ? supportedLanguages.find((l) => l.code === selectedLanguage)?.name
-                    : "Not selected"}
-                </div>
-              </div>
-              <div>
                 <div className="font-medium text-gray-700">Word Count</div>
                 <div className="text-gray-600">
                   {isAnalyzing ? (
@@ -269,6 +212,10 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
                     "Not analyzed"
                   )}
                 </div>
+              </div>
+              <div>
+                <div className="font-medium text-gray-700">Language</div>
+                <div className="text-gray-600">Will be detected automatically</div>
               </div>
             </div>
             
@@ -293,7 +240,7 @@ export default function UploadStep({ onFileUpload, isProcessing }: UploadStepPro
       <div className="flex justify-center">
         <Button
           onClick={handleUpload}
-          disabled={!selectedFile || !selectedLanguage || isProcessing || isAnalyzing}
+          disabled={!selectedFile || isProcessing || isAnalyzing}
           className="bg-[#F79B72] hover:bg-[#e68a61] text-white px-8"
         >
           {isProcessing ? "Uploading..." : isAnalyzing ? "Analyzing..." : "Upload & Extract Metadata"}
