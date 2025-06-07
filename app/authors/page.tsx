@@ -205,7 +205,7 @@ export default function AuthorsLandingPage() {
                 <Link href="/author/upload">
                   <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white text-lg py-6 px-8">
                     <Upload className="mr-2 h-5 w-5" />
-                    Upload Your Manuscript
+                    Get Your Manuscript Analyzed
                   </Button>
                 </Link>
                 <Button
