@@ -83,7 +83,7 @@ export default function Home() {
             <div className="flex flex-col md:flex-row items-center">
               <div className="md:w-1/2 mb-10 md:mb-0 md:pr-10">
                 <h1 className="text-4xl md:text-5xl font-bold text-[#2A4759] leading-tight mb-6">
-                  Find Self-Published Gems Using the Most Advanced AI Assistance
+                  Find Self-Published Page-turners Using the Most Advanced AI Assistance
                 </h1>
                 <p className="text-lg text-gray-600 mb-8">
                   Discover quality self-published books with AIbookReview. Our platform connects you with hidden
