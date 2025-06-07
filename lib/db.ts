@@ -1,7 +1,6 @@
 import { Database, open } from 'sqlite3';
 import path from 'path';
 import fs from 'fs';
-import { promisify } from 'util';
 
 // Ensure the data directory exists
 const dataDir = path.join(process.cwd(), 'data');
@@ -12,21 +11,32 @@ if (!fs.existsSync(dataDir)) {
 const dbPath = path.join(dataDir, 'aibookreview.db');
 
 // Create a database connection
-let db: Database;
+let db: Database | null = null;
 
 export async function getDb(): Promise<Database> {
   if (!db) {
-    db = await promisify(open)(dbPath, { verbose: true });
+    return new Promise((resolve, reject) => {
+      db = new Database(dbPath, (err) => {
+        if (err) {
+          console.error('Error opening database:', err);
+          reject(err);
+        } else {
+          console.log('Database connected successfully');
+          resolve(db!);
+        }
+      });
+    });
   }
   return db;
 }
 
-// Promisify database methods
+// Database methods
 export async function run(sql: string, params: any[] = []): Promise<any> {
-  const db = await getDb();
+  const database = await getDb();
   return new Promise((resolve, reject) => {
-    db.run(sql, params, function(err) {
+    database.run(sql, params, function(err) {
       if (err) {
+        console.error('Database run error:', err);
         reject(err);
       } else {
         resolve({ lastID: this.lastID, changes: this.changes });
@@ -36,10 +46,11 @@ export async function run(sql: string, params: any[] = []): Promise<any> {
 }
 
 export async function get(sql: string, params: any[] = []): Promise<any> {
-  const db = await getDb();
+  const database = await getDb();
   return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
+    database.get(sql, params, (err, row) => {
       if (err) {
+        console.error('Database get error:', err);
         reject(err);
       } else {
         resolve(row);
@@ -49,13 +60,14 @@ export async function get(sql: string, params: any[] = []): Promise<any> {
 }
 
 export async function all(sql: string, params: any[] = []): Promise<any[]> {
-  const db = await getDb();
+  const database = await getDb();
   return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
+    database.all(sql, params, (err, rows) => {
       if (err) {
+        console.error('Database all error:', err);
         reject(err);
       } else {
-        resolve(rows);
+        resolve(rows || []);
       }
     });
   });
@@ -64,6 +76,8 @@ export async function all(sql: string, params: any[] = []): Promise<any[]> {
 // Initialize database schema
 export async function initDb() {
   try {
+    console.log('Initializing database...');
+    
     await run(`
       CREATE TABLE IF NOT EXISTS users (
         id TEXT PRIMARY KEY,
@@ -338,6 +352,3 @@ export type ReaderReview = {
   created_at: string;
   updated_at: string;
 };
-
-// Initialize the database when this module is imported
-initDb().catch(console.error);

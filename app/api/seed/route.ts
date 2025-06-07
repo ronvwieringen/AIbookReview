@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { hash } from "bcryptjs";
 import { v4 as uuidv4 } from "uuid";
-import { run, all, get } from "@/lib/db";
+import { run, all, get, initDb } from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,27 +13,36 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    console.log('Starting database seeding...');
+
+    // Initialize database first
+    await initDb();
+
+    console.log('Database initialized, creating users...');
+
     // Create admin user
     const adminId = uuidv4();
     const adminPasswordHash = await hash('admin123', 10);
     
     await run(
-      `INSERT OR IGNORE INTO users (
+      `INSERT OR REPLACE INTO users (
         id, email, password_hash, first_name, last_name, role, 
         is_active, is_verified, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       [adminId, 'admin@aibookreview.com', adminPasswordHash, 'Admin', 'User', 'PlatformAdmin', 1, 1]
     );
+
+    console.log('Admin user created');
 
     // Create author user
     const authorId = uuidv4();
     const authorPasswordHash = await hash('author123', 10);
     
     await run(
-      `INSERT OR IGNORE INTO users (
+      `INSERT OR REPLACE INTO users (
         id, email, password_hash, first_name, last_name, role, 
         bio, is_active, is_verified, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       [
         authorId, 
         'sarah@example.com', 
@@ -48,7 +57,7 @@ export async function POST(request: NextRequest) {
     );
 
     await run(
-      `INSERT OR IGNORE INTO authors (
+      `INSERT OR REPLACE INTO authors (
         id, website_url, social_media_links, author_pseudonym
       ) VALUES (?, ?, ?, ?)`,
       [
@@ -62,33 +71,43 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    console.log('Author user created');
+
     // Create reader user
     const readerId = uuidv4();
     const readerPasswordHash = await hash('reader123', 10);
     
     await run(
-      `INSERT OR IGNORE INTO users (
+      `INSERT OR REPLACE INTO users (
         id, email, password_hash, first_name, last_name, role, 
         is_active, is_verified, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       [readerId, 'reader@example.com', readerPasswordHash, 'Mike', 'Johnson', 'Reader', 1, 1]
     );
 
-    // Create sample books
+    console.log('Reader user created');
+
+    // Get genre and language IDs
+    const nonFictionGenre = await get('SELECT id FROM genres WHERE name = ?', ['Non-Fiction']);
+    const englishLanguage = await get('SELECT id FROM languages WHERE code = ?', ['en']);
+
+    console.log('Genre and language found:', { nonFictionGenre, englishLanguage });
+
+    // Create sample book
     const book1Id = uuidv4();
     await run(
-      `INSERT OR IGNORE INTO books (
+      `INSERT OR REPLACE INTO books (
         id, title, author_id, genre_id, language_id, status, 
         cover_image_url, blurb, isbn, average_reader_rating, 
         reader_review_count, ai_quality_score, plagiarism_score, 
         has_author_responded_to_ai_review, published_at, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'), datetime('now'))`,
       [
         book1Id,
         'The Digital Nomad\'s Guide to Freedom',
         authorId,
-        2, // Non-Fiction
-        1, // English
+        nonFictionGenre?.id || 2,
+        englishLanguage?.id || 1,
         'Published',
         '/placeholder.svg?height=400&width=300&text=Digital+Nomad+Guide',
         'A comprehensive guide to building a location-independent lifestyle through digital entrepreneurship and remote work strategies.',
@@ -97,15 +116,17 @@ export async function POST(request: NextRequest) {
         23,
         92,
         2,
-        true
+        1
       ]
     );
+
+    console.log('Sample book created');
 
     // Add keywords for the book
     const keywords = ['digital nomad', 'remote work', 'entrepreneurship', 'lifestyle design', 'freedom'];
     for (const keyword of keywords) {
       // Add keyword to keywords table if it doesn't exist
-      const keywordResult = await run(
+      await run(
         'INSERT OR IGNORE INTO keywords (name) VALUES (?)',
         [keyword]
       );
@@ -117,21 +138,25 @@ export async function POST(request: NextRequest) {
       );
       
       // Add book-keyword relationship
-      await run(
-        'INSERT OR IGNORE INTO book_keywords (book_id, keyword_id) VALUES (?, ?)',
-        [book1Id, keywordData.id]
-      );
+      if (keywordData) {
+        await run(
+          'INSERT OR REPLACE INTO book_keywords (book_id, keyword_id) VALUES (?, ?)',
+          [book1Id, keywordData.id]
+        );
+      }
     }
+
+    console.log('Keywords added');
 
     // Create AI review for the book
     const aiReviewId = uuidv4();
     await run(
-      `INSERT OR IGNORE INTO ai_reviews (
+      `INSERT OR REPLACE INTO ai_reviews (
         id, book_id, review_date, processing_status, ai_model_version,
         full_blurb, promotional_blurb, single_line_summary, detailed_summary,
         review_summary, full_review_content, author_response, service_needs,
         plagiarism_details, created_at, updated_at
-      ) VALUES (?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, datetime('now'), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       [
         aiReviewId,
         book1Id,
@@ -166,14 +191,16 @@ export async function POST(request: NextRequest) {
       ]
     );
 
+    console.log('AI review created');
+
     // Create reader review for the book
     const readerReviewId = uuidv4();
     await run(
-      `INSERT OR IGNORE INTO reader_reviews (
+      `INSERT OR REPLACE INTO reader_reviews (
         id, book_id, user_id, rating, comment, review_date,
         verified_purchase, helpful_count, not_helpful_count, is_featured,
         created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP, ?, ?, ?, ?, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)`,
+      ) VALUES (?, ?, ?, ?, ?, datetime('now'), ?, ?, ?, ?, datetime('now'), datetime('now'))`,
       [
         readerReviewId,
         book1Id,
@@ -186,6 +213,10 @@ export async function POST(request: NextRequest) {
         1 // is_featured
       ]
     );
+
+    console.log('Reader review created');
+
+    console.log('Database seeding completed successfully');
 
     return NextResponse.json(
       { 
@@ -202,7 +233,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error in POST /api/seed:', error);
     return NextResponse.json(
-      { error: 'Failed to seed database', details: error.message },
+      { error: 'Failed to seed database', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
