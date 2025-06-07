@@ -1,6 +1,6 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import { Toaster } from "@/components/ui/toast"
+import { Providers } from '@/components/providers'
 
 export const metadata: Metadata = {
   title: 'AIbookReview - AI-Powered Book Reviews',
@@ -16,8 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {children}
-        <Toaster />
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   )
