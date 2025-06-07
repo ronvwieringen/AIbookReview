@@ -4,7 +4,7 @@ export default function HeroImage() {
   return (
     <div className="relative h-[400px] md:h-[500px] w-full rounded-lg overflow-hidden shadow-xl">
       <Image
-        src="/placeholder.svg?height=500&width=600"
+        src="/images/img_pen.jpg"
         alt="AI Book Review Platform"
         fill
         className="object-cover"
