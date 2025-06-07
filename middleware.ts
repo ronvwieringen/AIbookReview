@@ -4,9 +4,15 @@ import { getToken } from 'next-auth/jwt';
 
 export async function middleware(request: NextRequest) {
   try {
+    // Ensure NEXTAUTH_SECRET is set
+    if (!process.env.NEXTAUTH_SECRET) {
+      console.error('NEXTAUTH_SECRET environment variable is not set');
+      return NextResponse.next();
+    }
+
     const token = await getToken({ 
       req: request, 
-      secret: process.env.NEXTAUTH_SECRET || 'fallback-secret-for-development'
+      secret: process.env.NEXTAUTH_SECRET
     });
     
     const isAuthenticated = !!token;
