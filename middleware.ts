@@ -9,6 +9,11 @@ export async function middleware(request: NextRequest) {
   const isAuthorRoute = request.nextUrl.pathname.startsWith('/author');
   const isApiRoute = request.nextUrl.pathname.startsWith('/api');
 
+  // Allow seed endpoint in development
+  if (request.nextUrl.pathname === '/api/seed' && process.env.NODE_ENV === 'development') {
+    return NextResponse.next();
+  }
+
   // Protect admin routes
   if (isAdminRoute) {
     if (!isAuthenticated || token?.role !== 'PlatformAdmin') {
