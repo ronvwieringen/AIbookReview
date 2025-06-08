@@ -13,7 +13,7 @@
 
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -45,8 +45,41 @@ export default function PromptsManagementPage() {
   const [prompts, setPrompts] = useState<Prompt[]>([])
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  // Memoize the fetch function to prevent infinite loops
+  const fetchPrompts = useCallback(async () => {
+    try {
+      setLoading(true)
+      setError(null)
+      
+      console.log('Fetching prompts...')
+      const response = await fetch('/api/prompts')
+      
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Failed to fetch prompts:', response.status, errorText)
+        throw new Error(`Failed to fetch prompts: ${response.status}`)
+      }
+      
+      const data = await response.json()
+      console.log('Prompts fetched successfully:', data)
+      setPrompts(data)
+    } catch (error) {
+      console.error('Error fetching prompts:', error)
+      setError(error instanceof Error ? error.message : 'Failed to load prompts')
+      toast({
+        title: "Error",
+        description: "Failed to load prompts. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }, [toast])
 
   useEffect(() => {
+    // Check authentication first
     if (!isAuthenticated) {
       router.push("/login")
       return
@@ -57,31 +90,11 @@ export default function PromptsManagementPage() {
       return
     }
 
-    fetchPrompts()
-  }, [user, isAuthenticated, router])
-
-  const fetchPrompts = async () => {
-    try {
-      setLoading(true)
-      const response = await fetch('/api/prompts')
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch prompts')
-      }
-      
-      const data = await response.json()
-      setPrompts(data)
-    } catch (error) {
-      console.error('Error fetching prompts:', error)
-      toast({
-        title: "Error",
-        description: "Failed to load prompts. Please try again.",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
+    // Only fetch if we haven't loaded yet and we're authenticated
+    if (prompts.length === 0 && !error) {
+      fetchPrompts()
     }
-  }
+  }, [user, isAuthenticated, router, fetchPrompts, prompts.length, error])
 
   const handleSave = async (promptId: string) => {
     const prompt = prompts.find(p => p.id === promptId)
@@ -206,10 +219,7 @@ export default function PromptsManagementPage() {
     }
   }
 
-  if (!isAuthenticated || user?.role !== "PlatformAdmin") {
-    return <div>Loading...</div>
-  }
-
+  // Show loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -219,6 +229,28 @@ export default function PromptsManagementPage() {
         </div>
       </div>
     )
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-red-600 mb-4">Error: {error}</div>
+          <Button onClick={() => {
+            setError(null)
+            fetchPrompts()
+          }}>
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
+
+  // Check authentication
+  if (!isAuthenticated || user?.role !== "PlatformAdmin") {
+    return <div>Loading...</div>
   }
 
   const metadataExtractionPrompts = prompts.filter((p) => p.type === "metadata_extraction")

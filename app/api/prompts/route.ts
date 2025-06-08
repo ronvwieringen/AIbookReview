@@ -4,26 +4,43 @@ import { run, all, get, initDb } from "@/lib/db";
 
 export async function GET() {
   try {
+    console.log('GET /api/prompts - Starting...')
+    
     // Initialize database if needed
     await initDb();
+    console.log('Database initialized')
 
     const prompts = await all(`
       SELECT * FROM prompts 
       ORDER BY type, book_type, name
     `);
 
+    console.log('Raw prompts from database:', prompts)
+
     // Parse variables JSON for each prompt and add lastModified
-    const parsedPrompts = prompts.map(prompt => ({
-      ...prompt,
-      variables: prompt.variables ? JSON.parse(prompt.variables) : [],
-      lastModified: new Date(prompt.updated_at).toLocaleDateString()
-    }));
+    const parsedPrompts = prompts.map(prompt => {
+      let variables = [];
+      try {
+        variables = prompt.variables ? JSON.parse(prompt.variables) : [];
+      } catch (e) {
+        console.warn(`Failed to parse variables for prompt ${prompt.id}:`, e);
+        variables = [];
+      }
+
+      return {
+        ...prompt,
+        variables,
+        lastModified: new Date(prompt.updated_at).toLocaleDateString()
+      };
+    });
+
+    console.log('Parsed prompts:', parsedPrompts)
 
     return NextResponse.json(parsedPrompts);
   } catch (error) {
     console.error('Error fetching prompts:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch prompts' },
+      { error: 'Failed to fetch prompts', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
@@ -31,6 +48,8 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    console.log('POST /api/prompts - Starting...')
+    
     const promptData = await request.json();
     
     // Validate required fields
@@ -84,7 +103,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Error creating prompt:', error);
     return NextResponse.json(
-      { error: 'Failed to create prompt' },
+      { error: 'Failed to create prompt', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     );
   }
