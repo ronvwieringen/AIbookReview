@@ -1,14 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 import { v4 as uuidv4 } from "uuid";
-import { run, all, get, initDb } from "@/lib/db";
+import { run, all, get } from "@/lib/db";
 
 export async function GET() {
   try {
     console.log('GET /api/prompts - Starting...')
-    
-    // Initialize database if needed
-    await initDb();
-    console.log('Database initialized')
 
     const prompts = await all(`
       SELECT * FROM prompts 
