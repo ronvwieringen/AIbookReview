@@ -20,9 +20,8 @@
 
 "use client"
 
-import { useSession } from "next-auth/react"
-import { useRouter } from "next/navigation"
 import { useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -42,31 +41,26 @@ import {
   TrendingUp,
   AlertTriangle,
 } from "lucide-react"
+import { useSimpleAuth } from "@/lib/simple-auth"
 
 export default function AdminDashboard() {
-  const { data: session, status } = useSession()
+  const { user, isAuthenticated } = useSimpleAuth()
   const router = useRouter()
 
   useEffect(() => {
-    if (status === "loading") return // Still loading
-
-    if (!session) {
+    if (!isAuthenticated) {
       router.push("/login")
       return
     }
 
-    if (session.user.role !== "PlatformAdmin") {
+    if (user?.role !== "PlatformAdmin") {
       router.push("/")
       return
     }
-  }, [session, status, router])
+  }, [user, isAuthenticated, router])
 
-  if (status === "loading") {
+  if (!isAuthenticated || user?.role !== "PlatformAdmin") {
     return <div>Loading...</div>
-  }
-
-  if (!session || session.user.role !== "PlatformAdmin") {
-    return null
   }
 
   // Mock data - in real implementation, this would come from API calls

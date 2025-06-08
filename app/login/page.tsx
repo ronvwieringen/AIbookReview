@@ -1,4 +1,4 @@
-import { LoginForm } from "@/components/auth/login-form";
+import { SimpleLoginForm } from "@/components/auth/simple-login-form";
 import { BookOpen } from "lucide-react";
 import Link from "next/link";
 
@@ -15,7 +15,7 @@ export default function LoginPage() {
       </header>
       
       <main className="flex-grow flex items-center justify-center p-4">
-        <LoginForm />
+        <SimpleLoginForm />
       </main>
       
       <footer className="py-6 text-center text-gray-500 text-sm">

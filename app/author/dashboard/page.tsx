@@ -40,10 +40,8 @@
 
 "use client"
 
-import { useState } from "react"
-import { useSession } from "next-auth/react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useEffect } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -67,33 +65,28 @@ import ReviewsOverview from "@/components/dashboard/reviews-overview"
 import QuickActions from "@/components/dashboard/quick-actions"
 import PerformanceChart from "@/components/dashboard/performance-chart"
 import { getAuthorDashboardData } from "@/lib/author-dashboard-data"
+import { useSimpleAuth } from "@/lib/simple-auth"
 
 export default function AuthorDashboard() {
-  const { data: session, status } = useSession()
+  const { user, isAuthenticated } = useSimpleAuth()
   const router = useRouter()
   const [selectedTimeframe, setSelectedTimeframe] = useState("30d")
   const dashboardData = getAuthorDashboardData()
 
   useEffect(() => {
-    if (status === "loading") return // Still loading
-
-    if (!session) {
+    if (!isAuthenticated) {
       router.push("/login")
       return
     }
 
-    if (session.user.role !== "Author" && session.user.role !== "PlatformAdmin") {
+    if (user?.role !== "Author" && user?.role !== "PlatformAdmin") {
       router.push("/")
       return
     }
-  }, [session, status, router])
+  }, [user, isAuthenticated, router])
 
-  if (status === "loading") {
+  if (!isAuthenticated || (user?.role !== "Author" && user?.role !== "PlatformAdmin")) {
     return <div>Loading...</div>
-  }
-
-  if (!session || (session.user.role !== "Author" && session.user.role !== "PlatformAdmin")) {
-    return null
   }
 
   return (
@@ -104,7 +97,7 @@ export default function AuthorDashboard() {
         {/* Header */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#2A4759] mb-2">Welcome back, Sarah!</h1>
+            <h1 className="text-3xl font-bold text-[#2A4759] mb-2">Welcome back, {user?.name || 'Author'}!</h1>
             <p className="text-gray-600">Here's an overview of your publishing journey with AIbookReview.</p>
           </div>
           <div className="flex gap-3 mt-4 md:mt-0">

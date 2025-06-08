@@ -24,11 +24,11 @@
 
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { BookOpen, User, MessageSquare, Bell } from "lucide-react"
-import { useSession } from "next-auth/react"
+import { BookOpen, User, MessageSquare, Bell, LogOut } from "lucide-react"
+import { useSimpleAuth } from "@/lib/simple-auth"
 
 export default function AuthorDashboardNav() {
-  const { data: session } = useSession()
+  const { user, isAuthenticated, logout } = useSimpleAuth()
 
   return (
     <header className="border-b bg-white sticky top-0 z-50">
@@ -54,9 +54,12 @@ export default function AuthorDashboardNav() {
         </nav>
 
         <div className="flex items-center space-x-4">
-          {session ? (
+          {isAuthenticated && user ? (
             <>
-              <Button variant="ghost\" size="sm">
+              <span className="text-sm text-gray-600 hidden md:block">
+                Welcome, {user.name}
+              </span>
+              <Button variant="ghost" size="sm">
                 <MessageSquare className="h-4 w-4" />
               </Button>
               <Button variant="ghost" size="sm">
@@ -65,17 +68,15 @@ export default function AuthorDashboardNav() {
               <Button variant="ghost" size="sm">
                 <User className="h-4 w-4" />
               </Button>
+              <Button variant="outline" size="sm" onClick={logout}>
+                <LogOut className="h-4 w-4" />
+              </Button>
             </>
           ) : (
             <>
               <Link href="/login">
                 <Button variant="outline" className="border-[#2A4759] text-[#2A4759] hover:bg-[#2A4759] hover:text-white">
                   Log In
-                </Button>
-              </Link>
-              <Link href="/register">
-                <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white">
-                  Register
                 </Button>
               </Link>
             </>
