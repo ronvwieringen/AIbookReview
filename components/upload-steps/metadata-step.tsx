@@ -251,6 +251,13 @@ export default function MetadataStep({ metadata, onConfirm, onBack, isProcessing
                 <div className="text-gray-600">Identify areas where professional services could help</div>
               </div>
             </div>
+           <div className="flex items-start gap-3">
+              <div className="h-2 w-2 rounded-full bg-[#F79B72] mt-2 flex-shrink-0"></div>
+              <div>
+                <div className="font-medium text-[#2A4759]">Save or discard</div>
+                <div className="text-gray-600">You decide whether you want to publish your review</div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
