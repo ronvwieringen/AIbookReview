@@ -12,7 +12,7 @@ export async function GET() {
       ORDER BY type, book_type, name
     `);
 
-    // Parse variables JSON for each prompt
+    // Parse variables JSON for each prompt and add lastModified
     const parsedPrompts = prompts.map(prompt => ({
       ...prompt,
       variables: prompt.variables ? JSON.parse(prompt.variables) : [],
