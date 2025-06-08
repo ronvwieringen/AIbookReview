@@ -203,6 +203,21 @@ export async function initDb() {
       )
     `);
 
+    // Add prompts table
+    await run(`
+      CREATE TABLE IF NOT EXISTS prompts (
+        id TEXT PRIMARY KEY,
+        name TEXT NOT NULL,
+        type TEXT NOT NULL CHECK (type IN ('metadata_extraction', 'initial_review', 'detailed_review')),
+        book_type TEXT,
+        prompt_text TEXT NOT NULL,
+        variables TEXT DEFAULT '[]',
+        is_active INTEGER DEFAULT 1,
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        updated_at TEXT DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+
     // Insert initial data for genres
     const genres = [
       ['Fiction', 'Narrative works created from the imagination'],
@@ -247,10 +262,150 @@ export async function initDb() {
       );
     }
 
+    // Insert default prompts if they don't exist
+    await insertDefaultPrompts();
+
     console.log('Database initialized successfully');
   } catch (error) {
     console.error('Error initializing database:', error);
     throw error;
+  }
+}
+
+async function insertDefaultPrompts() {
+  const defaultPrompts = [
+    {
+      id: 'metadata-extraction-1',
+      name: 'Metadata Extraction',
+      type: 'metadata_extraction',
+      book_type: null,
+      prompt_text: `Analyze this manuscript and provide the following information in JSON format:
+{
+    "author": "Name of the primary author (if mentioned, otherwise 'Not specified')",
+    "co_authors": ["List of co-authors"] or [],
+    "booktype": "fiction or non-fiction or poetry or screenplay or essay or blog or scientific",
+    "language": "primary language of the text, in the correct language so for example French is Français and German is Deutsch ist Deutsch und Spanish is Español",
+    "ISBN":"ISBN-number",
+    "Publisher":"the publisher or uitgever",
+    "Wordcount":"the number of words in the manuscript",
+    "Topic":"The main topic in maximum 10 words, in the language as identified for the document",
+    "Characters":["in the case of fiction, a list of maximum five names of main characters that appear in the story, sorted from most important to least important"],
+    "Location":["a list of maximum three main geographical locations where the story is situated"]
+}
+Base your analysis ONLY on the actual content of the manuscript. If any information is not available, use 'Not specified'.`,
+      variables: '[]',
+      is_active: 1
+    },
+    {
+      id: 'fiction-review-1',
+      name: 'Fiction Review',
+      type: 'initial_review',
+      book_type: 'fiction',
+      prompt_text: `You are a professional literary critic reviewing a {type} manuscript titled "{topic}". 
+
+Analyze this {language} fiction work and provide a comprehensive review covering:
+
+1. **Language & Style** (25 points)
+   - Grammar, spelling, and punctuation accuracy
+   - Word choice and vocabulary effectiveness
+   - Clarity and accessibility of prose
+   - Character voice differentiation
+   - Use of literary devices
+
+2. **Sensory Experience & Immersion** (20 points)
+   - Integration of sensory details
+   - Emotional portrayal through physical reactions
+   - Exploration of characters' inner worlds
+
+3. **Scene Construction & Dynamics** (25 points)
+   - Setting and atmosphere creation
+   - Scene structure and pacing
+   - Movement and environmental interaction
+
+4. **Plot, Structure & Meaning** (30 points)
+   - Logic and believability
+   - Character motivation
+   - Tension building and conflict
+   - Plot structure and climax effectiveness
+
+Provide a score out of 100 and detailed feedback for each section. End with a brief summary of strengths and areas for improvement.`,
+      variables: '["type", "topic", "language"]',
+      is_active: 1
+    },
+    {
+      id: 'non-fiction-review-1',
+      name: 'Non-Fiction Review',
+      type: 'initial_review',
+      book_type: 'non-fiction',
+      prompt_text: `You are a professional editor reviewing a {type} manuscript about "{topic}". 
+
+Analyze this {language} non-fiction work and provide a comprehensive review covering:
+
+1. **Substantiation of Claims** (30 points)
+   - Quality of supporting evidence
+   - Appropriateness for target audience
+   - Persuasiveness of arguments
+   - Source citation and originality
+
+2. **Completeness** (25 points)
+   - Coverage of core topic aspects
+   - Depth of insight beyond common knowledge
+
+3. **Structure & Clarity** (25 points)
+   - Logical organization
+   - Clear presentation of ideas
+   - Accessibility to intended readers
+
+4. **Originality & Value** (20 points)
+   - Unique perspective or contribution
+   - Practical applicability
+   - Innovation in approach
+
+Provide a score out of 100 and detailed feedback for each section. Identify any weaknesses such as oversimplification, bias, or outdated information.`,
+      variables: '["type", "topic", "language"]',
+      is_active: 1
+    },
+    {
+      id: 'poetry-review-1',
+      name: 'Poetry Review',
+      type: 'initial_review',
+      book_type: 'poetry',
+      prompt_text: `You are a poetry critic reviewing a {type} collection titled "{topic}".
+
+Analyze this {language} poetry work and provide a comprehensive review covering:
+
+1. **Language & Craft** (35 points)
+   - Word choice and precision
+   - Rhythm and meter
+   - Use of poetic devices
+   - Voice and tone consistency
+
+2. **Imagery & Emotion** (30 points)
+   - Vivid and original imagery
+   - Emotional resonance
+   - Sensory engagement
+
+3. **Structure & Form** (20 points)
+   - Poem structure and organization
+   - Collection coherence
+   - Form innovation or mastery
+
+4. **Meaning & Impact** (15 points)
+   - Thematic depth
+   - Cultural or universal relevance
+   - Reader engagement
+
+Provide a score out of 100 and detailed feedback for each section. Comment on the collection's overall unity and individual poem strengths.`,
+      variables: '["type", "topic", "language"]',
+      is_active: 1
+    }
+  ];
+
+  for (const prompt of defaultPrompts) {
+    await run(
+      'INSERT OR IGNORE INTO prompts (id, name, type, book_type, prompt_text, variables, is_active, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, datetime("now"), datetime("now"))',
+      [prompt.id, prompt.name, prompt.type, prompt.book_type, prompt.prompt_text, prompt.variables, prompt.is_active]
+    );
   }
 }
 
@@ -349,6 +504,18 @@ export type ReaderReview = {
   helpful_count: number;
   not_helpful_count: number;
   is_featured: boolean;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Prompt = {
+  id: string;
+  name: string;
+  type: 'metadata_extraction' | 'initial_review' | 'detailed_review';
+  book_type?: string;
+  prompt_text: string;
+  variables: string[];
+  is_active: boolean;
   created_at: string;
   updated_at: string;
 };

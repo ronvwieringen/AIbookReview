@@ -13,7 +13,8 @@
 
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
@@ -22,154 +23,149 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
-import { FileText, MessageSquare, Zap, Plus, Save, Eye, Code } from "lucide-react"
+import { FileText, MessageSquare, Zap, Plus, Save, Eye, Code, ArrowLeft, Loader2 } from "lucide-react"
+import { useSimpleAuth } from "@/lib/simple-auth"
+import Link from "next/link"
 
 interface Prompt {
   id: string
   name: string
   type: "metadata_extraction" | "initial_review" | "detailed_review"
-  bookType?: string // For initial_review prompts
-  promptText: string
-  variables: string[] // Available variables like {type}, {topic}, {language}
-  isActive: boolean
+  book_type?: string
+  prompt_text: string
+  variables: string[]
+  is_active: boolean
   lastModified: string
 }
 
 export default function PromptsManagementPage() {
+  const { user, isAuthenticated } = useSimpleAuth()
+  const router = useRouter()
   const { toast } = useToast()
-  const [selectedPrompt, setSelectedPrompt] = useState<string | null>(null)
+  const [prompts, setPrompts] = useState<Prompt[]>([])
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState<string | null>(null)
 
-  // Mock data - in real implementation, this would come from the database
-  const [prompts, setPrompts] = useState<Prompt[]>([
-    {
-      id: "1",
-      name: "Metadata Extraction",
-      type: "metadata_extraction",
-      promptText: `Analyze this manuscript and provide the following information in JSON format:
-{
-    "author": "Name of the primary author (if mentioned, otherwise 'Not specified')",
-    "co_authors": ["List of co-authors"] or [],
-    "booktype": "fiction or non-fiction or poetry or screenplay or essay or blog or scientific",
-    "language": "primary language of the text, in the correct language so for example French is Français and German is Deutsch ist Deutsch und Spanish is Español",
-    "ISBN":"ISBN-number",
-    "Publisher":"the publisher or uitgever",
-    "Wordcount":"the number of words in the manuscript",
-    "Topic":"The main topic in maximum 10 words, in the language as identified for the document",
-    "Characters":["in the case of fiction, a list of maximum five names of main characters that appear in the story, sorted from most important to least important"],
-    "Location":["a list of maximum three main geographical locations where the story is situated"]
-}
-Base your analysis ONLY on the actual content of the manuscript. If any information is not available, use 'Not specified'.`,
-      variables: [],
-      isActive: true,
-      lastModified: "2024-01-15",
-    },
-    {
-      id: "2",
-      name: "Fiction Review",
-      type: "initial_review",
-      bookType: "fiction",
-      promptText: `You are a professional literary critic reviewing a {type} manuscript titled "{topic}". 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      router.push("/login")
+      return
+    }
 
-Analyze this {language} fiction work and provide a comprehensive review covering:
+    if (user?.role !== "PlatformAdmin") {
+      router.push("/")
+      return
+    }
 
-1. **Language & Style** (25 points)
-   - Grammar, spelling, and punctuation accuracy
-   - Word choice and vocabulary effectiveness
-   - Clarity and accessibility of prose
-   - Character voice differentiation
-   - Use of literary devices
+    fetchPrompts()
+  }, [user, isAuthenticated, router])
 
-2. **Sensory Experience & Immersion** (20 points)
-   - Integration of sensory details
-   - Emotional portrayal through physical reactions
-   - Exploration of characters' inner worlds
+  const fetchPrompts = async () => {
+    try {
+      setLoading(true)
+      const response = await fetch('/api/prompts')
+      
+      if (!response.ok) {
+        throw new Error('Failed to fetch prompts')
+      }
+      
+      const data = await response.json()
+      setPrompts(data)
+    } catch (error) {
+      console.error('Error fetching prompts:', error)
+      toast({
+        title: "Error",
+        description: "Failed to load prompts. Please try again.",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
 
-3. **Scene Construction & Dynamics** (25 points)
-   - Setting and atmosphere creation
-   - Scene structure and pacing
-   - Movement and environmental interaction
+  const handleSave = async (promptId: string) => {
+    const prompt = prompts.find(p => p.id === promptId)
+    if (!prompt) return
 
-4. **Plot, Structure & Meaning** (30 points)
-   - Logic and believability
-   - Character motivation
-   - Tension building and conflict
-   - Plot structure and climax effectiveness
+    // Validation
+    if (!prompt.name.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Prompt name is required.",
+        variant: "destructive",
+      })
+      return
+    }
 
-Provide a score out of 100 and detailed feedback for each section. End with a brief summary of strengths and areas for improvement.`,
-      variables: ["type", "topic", "language"],
-      isActive: true,
-      lastModified: "2024-01-14",
-    },
-    {
-      id: "3",
-      name: "Non-Fiction Review",
-      type: "initial_review",
-      bookType: "non-fiction",
-      promptText: `You are a professional editor reviewing a {type} manuscript about "{topic}". 
+    if (!prompt.prompt_text.trim()) {
+      toast({
+        title: "Validation Error", 
+        description: "Prompt text is required.",
+        variant: "destructive",
+      })
+      return
+    }
 
-Analyze this {language} non-fiction work and provide a comprehensive review covering:
+    try {
+      setSaving(promptId)
+      
+      const response = await fetch(`/api/prompts/${promptId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(prompt),
+      })
 
-1. **Substantiation of Claims** (30 points)
-   - Quality of supporting evidence
-   - Appropriateness for target audience
-   - Persuasiveness of arguments
-   - Source citation and originality
+      if (!response.ok) {
+        const errorData = await response.json()
+        throw new Error(errorData.error || 'Failed to save prompt')
+      }
 
-2. **Completeness** (25 points)
-   - Coverage of core topic aspects
-   - Depth of insight beyond common knowledge
+      const updatedPrompt = await response.json()
+      
+      setPrompts(prev => prev.map(p => 
+        p.id === promptId ? updatedPrompt : p
+      ))
 
-3. **Structure & Clarity** (25 points)
-   - Logical organization
-   - Clear presentation of ideas
-   - Accessibility to intended readers
+      toast({
+        title: "Success",
+        description: "Prompt saved successfully.",
+      })
+    } catch (error) {
+      console.error('Error saving prompt:', error)
+      toast({
+        title: "Error",
+        description: error instanceof Error ? error.message : "Failed to save prompt.",
+        variant: "destructive",
+      })
+    } finally {
+      setSaving(null)
+    }
+  }
 
-4. **Originality & Value** (20 points)
-   - Unique perspective or contribution
-   - Practical applicability
-   - Innovation in approach
+  const handlePreview = (prompt: Prompt) => {
+    let previewText = prompt.prompt_text
+    prompt.variables.forEach((variable) => {
+      const exampleValues: Record<string, string> = {
+        type: "fiction",
+        topic: "The Adventures of a Time Traveler",
+        language: "English",
+      }
+      previewText = previewText.replace(new RegExp(`{${variable}}`, "g"), exampleValues[variable] || `{${variable}}`)
+    })
 
-Provide a score out of 100 and detailed feedback for each section. Identify any weaknesses such as oversimplification, bias, or outdated information.`,
-      variables: ["type", "topic", "language"],
-      isActive: true,
-      lastModified: "2024-01-13",
-    },
-    {
-      id: "4",
-      name: "Poetry Review",
-      type: "initial_review",
-      bookType: "poetry",
-      promptText: `You are a poetry critic reviewing a {type} collection titled "{topic}".
+    toast({
+      title: "Prompt Preview",
+      description: "Preview generated with example values.",
+    })
+  }
 
-Analyze this {language} poetry work and provide a comprehensive review covering:
-
-1. **Language & Craft** (35 points)
-   - Word choice and precision
-   - Rhythm and meter
-   - Use of poetic devices
-   - Voice and tone consistency
-
-2. **Imagery & Emotion** (30 points)
-   - Vivid and original imagery
-   - Emotional resonance
-   - Sensory engagement
-
-3. **Structure & Form** (20 points)
-   - Poem structure and organization
-   - Collection coherence
-   - Form innovation or mastery
-
-4. **Meaning & Impact** (15 points)
-   - Thematic depth
-   - Cultural or universal relevance
-   - Reader engagement
-
-Provide a score out of 100 and detailed feedback for each section. Comment on the collection's overall unity and individual poem strengths.`,
-      variables: ["type", "topic", "language"],
-      isActive: true,
-      lastModified: "2024-01-12",
-    },
-  ])
+  const updatePrompt = (promptId: string, field: keyof Prompt, value: any) => {
+    setPrompts(prev => prev.map(p => 
+      p.id === promptId ? { ...p, [field]: value } : p
+    ))
+  }
 
   const getTypeIcon = (type: string) => {
     switch (type) {
@@ -210,29 +206,19 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
     }
   }
 
-  const handleSave = (promptId: string) => {
-    toast({
-      title: "Prompt Saved",
-      description: "Prompt has been updated successfully.",
-    })
+  if (!isAuthenticated || user?.role !== "PlatformAdmin") {
+    return <div>Loading...</div>
   }
 
-  const handlePreview = (prompt: Prompt) => {
-    // Replace variables with example values for preview
-    let previewText = prompt.promptText
-    prompt.variables.forEach((variable) => {
-      const exampleValues: Record<string, string> = {
-        type: "fiction",
-        topic: "The Adventures of a Time Traveler",
-        language: "English",
-      }
-      previewText = previewText.replace(new RegExp(`{${variable}}`, "g"), exampleValues[variable] || `{${variable}}`)
-    })
-
-    toast({
-      title: "Prompt Preview",
-      description: "Preview generated with example values.",
-    })
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="flex items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-[#F79B72]" />
+          <span className="text-gray-600">Loading prompts...</span>
+        </div>
+      </div>
+    )
   }
 
   const metadataExtractionPrompts = prompts.filter((p) => p.type === "metadata_extraction")
@@ -242,6 +228,15 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href="/admin" className="flex items-center gap-2">
+              <ArrowLeft className="h-4 w-4" />
+              Back to Admin Dashboard
+            </Link>
+          </Button>
+        </div>
+        
         <h1 className="text-3xl font-bold text-[#2A4759] mb-2">Prompts Management</h1>
         <p className="text-gray-600">
           Create, edit, and manage prompts used with the LLMs for various tasks and languages. Prompts can include
@@ -279,8 +274,8 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={getTypeColor(prompt.type)}>{getTypeName(prompt.type)}</Badge>
-                    <Badge variant={prompt.isActive ? "default" : "secondary"}>
-                      {prompt.isActive ? "Active" : "Inactive"}
+                    <Badge variant={prompt.is_active ? "default" : "secondary"}>
+                      {prompt.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
@@ -290,12 +285,8 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                   <Label htmlFor={`prompt-${prompt.id}`}>Prompt Text</Label>
                   <Textarea
                     id={`prompt-${prompt.id}`}
-                    value={prompt.promptText}
-                    onChange={(e) => {
-                      setPrompts((prev) =>
-                        prev.map((p) => (p.id === prompt.id ? { ...p, promptText: e.target.value } : p)),
-                      )
-                    }}
+                    value={prompt.prompt_text}
+                    onChange={(e) => updatePrompt(prompt.id, 'prompt_text', e.target.value)}
                     rows={12}
                     className="font-mono text-sm"
                   />
@@ -308,9 +299,14 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                   </Button>
                   <Button
                     onClick={() => handleSave(prompt.id)}
+                    disabled={saving === prompt.id}
                     className="bg-[#F79B72] hover:bg-[#F79B72]/90 text-white"
                   >
-                    <Save className="h-4 w-4 mr-2" />
+                    {saving === prompt.id ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     Save
                   </Button>
                 </div>
@@ -337,15 +333,15 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                     <div>
                       <CardTitle>{prompt.name}</CardTitle>
                       <CardDescription>
-                        Book Type: {prompt.bookType} • Last modified: {prompt.lastModified}
+                        Book Type: {prompt.book_type} • Last modified: {prompt.lastModified}
                       </CardDescription>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge className={getTypeColor(prompt.type)}>{getTypeName(prompt.type)}</Badge>
-                    <Badge variant="outline">{prompt.bookType}</Badge>
-                    <Badge variant={prompt.isActive ? "default" : "secondary"}>
-                      {prompt.isActive ? "Active" : "Inactive"}
+                    <Badge variant="outline">{prompt.book_type}</Badge>
+                    <Badge variant={prompt.is_active ? "default" : "secondary"}>
+                      {prompt.is_active ? "Active" : "Inactive"}
                     </Badge>
                   </div>
                 </div>
@@ -354,7 +350,10 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
                     <Label htmlFor={`book-type-${prompt.id}`}>Book Type</Label>
-                    <Select value={prompt.bookType || ""}>
+                    <Select 
+                      value={prompt.book_type || ""} 
+                      onValueChange={(value) => updatePrompt(prompt.id, 'book_type', value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select book type" />
                       </SelectTrigger>
@@ -389,12 +388,8 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                   <Label htmlFor={`prompt-${prompt.id}`}>Prompt Text</Label>
                   <Textarea
                     id={`prompt-${prompt.id}`}
-                    value={prompt.promptText}
-                    onChange={(e) => {
-                      setPrompts((prev) =>
-                        prev.map((p) => (p.id === prompt.id ? { ...p, promptText: e.target.value } : p)),
-                      )
-                    }}
+                    value={prompt.prompt_text}
+                    onChange={(e) => updatePrompt(prompt.id, 'prompt_text', e.target.value)}
                     rows={15}
                     className="font-mono text-sm"
                   />
@@ -407,9 +402,14 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                   </Button>
                   <Button
                     onClick={() => handleSave(prompt.id)}
+                    disabled={saving === prompt.id}
                     className="bg-[#F79B72] hover:bg-[#F79B72]/90 text-white"
                   >
-                    <Save className="h-4 w-4 mr-2" />
+                    {saving === prompt.id ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Save className="h-4 w-4 mr-2" />
+                    )}
                     Save
                   </Button>
                 </div>
@@ -457,12 +457,8 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                     <Label htmlFor={`prompt-${prompt.id}`}>Prompt Text</Label>
                     <Textarea
                       id={`prompt-${prompt.id}`}
-                      value={prompt.promptText}
-                      onChange={(e) => {
-                        setPrompts((prev) =>
-                          prev.map((p) => (p.id === prompt.id ? { ...p, promptText: e.target.value } : p)),
-                        )
-                      }}
+                      value={prompt.prompt_text}
+                      onChange={(e) => updatePrompt(prompt.id, 'prompt_text', e.target.value)}
                       rows={12}
                       className="font-mono text-sm"
                     />
@@ -475,9 +471,14 @@ Provide a score out of 100 and detailed feedback for each section. Comment on th
                     </Button>
                     <Button
                       onClick={() => handleSave(prompt.id)}
+                      disabled={saving === prompt.id}
                       className="bg-[#F79B72] hover:bg-[#F79B72]/90 text-white"
                     >
-                      <Save className="h-4 w-4 mr-2" />
+                      {saving === prompt.id ? (
+                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                      ) : (
+                        <Save className="h-4 w-4 mr-2" />
+                      )}
                       Save
                     </Button>
                   </div>
