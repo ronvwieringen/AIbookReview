@@ -10,7 +10,7 @@ if (!fs.existsSync(dataDir)) {
 
 const dbPath = path.join(dataDir, 'aibookreview.db');
 
-// Create a database connection
+// Create a database connection with proper configuration
 let db: Database | null = null;
 let initPromise: Promise<void> | null = null;
 
@@ -23,6 +23,14 @@ export async function getDb(): Promise<Database> {
           reject(err);
         } else {
           console.log('Database connected successfully');
+          
+          // Configure database for better concurrency handling
+          db!.configure('busyTimeout', 5000); // Wait up to 5 seconds for locks
+          db!.run('PRAGMA journal_mode = WAL'); // Enable WAL mode for better concurrency
+          db!.run('PRAGMA synchronous = NORMAL'); // Balance between safety and performance
+          db!.run('PRAGMA cache_size = 1000'); // Increase cache size
+          db!.run('PRAGMA temp_store = memory'); // Store temp tables in memory
+          
           resolve(db!);
         }
       });
@@ -31,46 +39,73 @@ export async function getDb(): Promise<Database> {
   return db;
 }
 
-// Database methods
+// Database methods with retry logic for busy errors
 export async function run(sql: string, params: any[] = []): Promise<any> {
   const database = await getDb();
   return new Promise((resolve, reject) => {
-    database.run(sql, params, function(err) {
-      if (err) {
-        console.error('Database run error:', err);
-        reject(err);
-      } else {
-        resolve({ lastID: this.lastID, changes: this.changes });
-      }
-    });
+    const executeWithRetry = (attempt: number = 0) => {
+      database.run(sql, params, function(err) {
+        if (err) {
+          // Retry on busy errors up to 3 times with exponential backoff
+          if (err.code === 'SQLITE_BUSY' && attempt < 3) {
+            const delay = Math.pow(2, attempt) * 100; // 100ms, 200ms, 400ms
+            setTimeout(() => executeWithRetry(attempt + 1), delay);
+            return;
+          }
+          console.error('Database run error:', err);
+          reject(err);
+        } else {
+          resolve({ lastID: this.lastID, changes: this.changes });
+        }
+      });
+    };
+    executeWithRetry();
   });
 }
 
 export async function get(sql: string, params: any[] = []): Promise<any> {
   const database = await getDb();
   return new Promise((resolve, reject) => {
-    database.get(sql, params, (err, row) => {
-      if (err) {
-        console.error('Database get error:', err);
-        reject(err);
-      } else {
-        resolve(row);
-      }
-    });
+    const executeWithRetry = (attempt: number = 0) => {
+      database.get(sql, params, (err, row) => {
+        if (err) {
+          // Retry on busy errors up to 3 times with exponential backoff
+          if (err.code === 'SQLITE_BUSY' && attempt < 3) {
+            const delay = Math.pow(2, attempt) * 100; // 100ms, 200ms, 400ms
+            setTimeout(() => executeWithRetry(attempt + 1), delay);
+            return;
+          }
+          console.error('Database get error:', err);
+          reject(err);
+        } else {
+          resolve(row);
+        }
+      });
+    };
+    executeWithRetry();
   });
 }
 
 export async function all(sql: string, params: any[] = []): Promise<any[]> {
   const database = await getDb();
   return new Promise((resolve, reject) => {
-    database.all(sql, params, (err, rows) => {
-      if (err) {
-        console.error('Database all error:', err);
-        reject(err);
-      } else {
-        resolve(rows || []);
-      }
-    });
+    const executeWithRetry = (attempt: number = 0) => {
+      database.all(sql, params, (err, rows) => {
+        if (err) {
+          // Retry on busy errors up to 3 times with exponential backoff
+          if (err.code === 'SQLITE_BUSY' && attempt < 3) {
+            const delay = Math.pow(2, attempt) * 100; // 100ms, 200ms, 400ms
+            setTimeout(() => executeWithRetry(attempt + 1), delay);
+            return;
+          }
+          console.error('Database all error:', err);
+          reject(err);
+        } else {
+          resolve(rows || []);
+        }
+      });
+    };
+    executeWithRetry();
   });
 }
 
