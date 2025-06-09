@@ -1,383 +1,391 @@
-/**
- * REQUIREMENTS REFERENCES:
- *
- * [REQ-UI-001] Landing Page Design
- * - Professional, clean design that builds trust
- * - Clear value proposition for authors
- * - Prominent call-to-action buttons
- *
- * [REQ-CONTENT-001] Value Proposition Communication
- * - Clearly communicate benefits for authors
- * - Highlight AI-powered quality assessment
- * - Emphasize security and IP protection
- *
- * [REQ-FUNC-008] Manuscript Upload Process
- * - Clear explanation of upload workflow
- * - File format support information
- * - Security and privacy assurances
- *
- * [REQ-FUNC-009] AI Analysis Workflow
- * - Detailed explanation of AI analysis process
- * - Quality assessment features
- * - Plagiarism detection capabilities
- *
- * [REQ-FUNC-007] Service Provider Integration
- * - Connection to professional services
- * - AI-suggested service recommendations
- * - Service marketplace integration
- */
-
-import Link from "next/link"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import {
-  ChevronRight,
-  BookOpen,
-  Shield,
-  Users,
-  BarChart,
-  Upload,
-  CheckCircle,
-  FileText,
-  Zap,
-  Target,
-  Globe,
-  ArrowRight,
-  ArrowDown,
-} from "lucide-react"
-import FeatureCard from "@/components/feature-card"
-import Testimonial from "@/components/testimonial"
-import Footer from "@/components/footer"
+import { Card, CardContent } from "@/components/ui/card"
+import { BookOpen, Users, Star, CheckCircle, TrendingUp } from "lucide-react"
+import Link from "next/link"
+import Image from "next/image"
 
-export default function AuthorsLandingPage() {
-  const authorBenefits = [
-    {
-      icon: <BarChart className="h-8 w-8 text-[#F79B72]" />,
-      title: "Objective AI Feedback",
-      description:
-        "Get comprehensive, unbiased analysis of your manuscript with detailed quality scores and actionable improvement suggestions.",
-    },
-    {
-      icon: <Shield className="h-8 w-8 text-[#F79B72]" />,
-      title: "IP Protection Guaranteed",
-      description:
-        "Your manuscripts are securely processed and automatically deleted after analysis. Your intellectual property remains completely protected.",
-    },
-    {
-      icon: <Users className="h-8 w-8 text-[#F79B72]" />,
-      title: "Connect with Readers",
-      description:
-        "Increase your book's discoverability and build credibility with readers through transparent AI reviews and quality scores.",
-    },
-    {
-      icon: <Target className="h-8 w-8 text-[#F79B72]" />,
-      title: "Professional Services",
-      description:
-        "Get AI-powered recommendations for editors, cover designers, and other professionals based on your manuscript's specific needs.",
-    },
-    {
-      icon: <FileText className="h-8 w-8 text-[#F79B72]" />,
-      title: "Marketing Content",
-      description:
-        "Receive AI-generated promotional blurbs, summaries, and marketing copy to help promote your book effectively.",
-    },
-    {
-      icon: <Globe className="h-8 w-8 text-[#F79B72]" />,
-      title: "Multilingual Support",
-      description:
-        "Submit manuscripts in multiple languages including English, Dutch, German, French, Spanish, Italian, and Portuguese.",
-    },
-  ]
-
-  const processSteps = [
-    {
-      number: 1,
-      title: "Upload Your Manuscript",
-      description:
-        "Securely upload your manuscript in PDF, DOCX, TXT, or MD format. Our system automatically extracts metadata and ensures your IP is protected.",
-      features: ["Multiple file formats", "Automatic metadata extraction", "Secure encryption", "IP protection"],
-    },
-    {
-      number: 2,
-      title: "AI Analysis & Review",
-      description:
-        "Our advanced AI analyzes your manuscript for quality, originality, and marketability, providing detailed feedback and scores.",
-      features: ["Quality assessment", "Plagiarism detection", "Style analysis", "Genre-specific feedback"],
-    },
-    {
-      number: 3,
-      title: "Review & Improve",
-      description:
-        "Access your comprehensive AI review with actionable feedback, promotional content, and service recommendations.",
-      features: ["Detailed feedback", "Promotional blurbs", "Service recommendations", "Quality scores"],
-    },
-    {
-      number: 4,
-      title: "Publish & Connect",
-      description:
-        "Choose to make your review public, connect with readers, and link to where your book can be purchased.",
-      features: ["Public/private options", "Reader engagement", "Purchase links", "Author profile"],
-    },
-  ]
-
-  const pricingPlans = [
-    {
-      name: "Free Review",
-      price: "€0",
-      description: "Perfect for getting started",
-      features: [
-        "Basic AI quality assessment",
-        "Plagiarism detection",
-        "Simple promotional blurb",
-        "Basic service recommendations",
-        "Public review option",
-      ],
-      cta: "Get Free Review",
-      popular: false,
-    },
-    {
-      name: "In-Depth Review",
-      price: "€29",
-      description: "Comprehensive analysis for serious authors",
-      features: [
-        "Detailed AI quality assessment",
-        "Advanced plagiarism detection",
-        "Multiple promotional blurbs",
-        "Comprehensive service recommendations",
-        "Priority processing",
-        "Author dashboard access",
-        "Marketing content package",
-      ],
-      cta: "Upgrade to In-Depth",
-      popular: true,
-    },
-  ]
-
+export default function AuthorPortalPage() {
   return (
-    <div className="flex flex-col min-h-screen">
-      {/* Navigation */}
+    <div className="min-h-screen bg-white">
+      {/* Header */}
       <header className="border-b bg-white sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center">
-            <BookOpen className="h-8 w-8 text-[#2A4759]" />
-            <span className="ml-2 text-2xl font-bold text-[#2A4759]">AIbookReview</span>
-          </Link>
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+          <div className="flex items-center space-x-2">
+            <BookOpen className="h-8 w-8 text-amber-600" />
+            <span className="text-2xl font-bold text-gray-900">AIbookReview</span>
+          </div>
           <nav className="hidden md:flex space-x-8">
-            <Link href="/" className="text-gray-600 hover:text-[#F79B72]">
+            <Link href="/" className="text-gray-700 hover:text-amber-600 font-medium">
               Home
             </Link>
-            <Link href="/reviews" className="text-gray-600 hover:text-[#F79B72]">
-              Browse Books
+            <Link href="#how-it-works" className="text-gray-700 hover:text-amber-600 font-medium">
+              How It Works
             </Link>
-            <Link href="/authors" className="text-[#F79B72] font-semibold">
-              For Authors
+            <Link href="#testimonials" className="text-gray-700 hover:text-amber-600 font-medium">
+              Testimonials
             </Link>
-            <Link href="/services" className="text-gray-600 hover:text-[#F79B72]">
-              Services
+            <Link href="/discover" className="text-gray-700 hover:text-amber-600 font-medium">
+              Discover Books
             </Link>
           </nav>
-          <div className="flex items-center space-x-4">
-            <Button
-              variant="outline"
-              className="hidden sm:inline-flex border-[#2A4759] text-[#2A4759] hover:bg-[#2A4759] hover:text-white"
-            >
-              Log In
+          <div className="flex space-x-3">
+            <Button variant="ghost" asChild>
+              <Link href="/login">Sign In</Link>
             </Button>
-            <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white">Register</Button>
+            <Button className="bg-amber-600 hover:bg-amber-700" asChild>
+              <Link href="/register">Get Started</Link>
+            </Button>
           </div>
         </div>
       </header>
 
-      <main className="flex-grow">
-        {/* Hero Section */}
-        <section className="bg-gradient-to-br from-[#2A4759] to-[#1e3544] text-white py-16 md:py-24">
-          <div className="container mx-auto px-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6">
-                Elevate Your Self-Publishing Journey with AI-Powered Reviews
+      {/* Hero Section */}
+      <section className="relative py-20 px-4 bg-gradient-to-br from-amber-50 via-orange-50 to-red-50">
+        <div className="container mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+                Elevate Your Self-Published Books with <span className="text-amber-600">AI-Powered Reviews</span>
               </h1>
-              <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-3xl mx-auto">
-                Get objective, comprehensive feedback on your manuscript. Build credibility with readers and connect
-                with professional services—all while protecting your intellectual property.
+              <p className="text-xl text-gray-700 mb-8 leading-relaxed">
+                Get objective, AI-driven manuscript analysis to improve your work, build credibility, and connect with
+                readers who love quality stories.
               </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/author/upload">
-                  <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white text-lg py-6 px-8">
-                    <Upload className="mr-2 h-5 w-5" />
-                    Get Your Manuscript Analyzed
-                  </Button>
-                </Link>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-lg px-8 py-3" asChild>
+                  <Link href="/upload">Analyze your manuscript</Link>
+                </Button>
                 <Button
+                  size="lg"
                   variant="outline"
-                  className="border-white text-white bg-white/10 hover:bg-white hover:text-[#2A4759] text-lg py-6 px-8"
+                  className="text-lg px-8 py-3 border-amber-600 text-amber-700 hover:bg-amber-50"
+                  asChild
                 >
-                  See Sample Review
+                  <Link href="/dashboard">View Dashboard</Link>
                 </Button>
               </div>
-              <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-300">
-                <div className="flex items-center">
-                  <CheckCircle className="h-4 w-4 mr-2" />
-                  Free to start
-                </div>
-                <div className="flex items-center">
-                  <Shield className="h-4 w-4 mr-2" />
-                  IP protected
-                </div>
-                <div className="flex items-center">
-                  <Zap className="h-4 w-4 mr-2" />
-                  Results in minutes
+            </div>
+            <div className="relative hidden lg:block">
+              <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/images/img_lady.jpg"
+                  alt="Elegant hands writing with an ornate fountain pen, representing quality literary craftsmanship"
+                  width={600}
+                  height={400}
+                  className="w-full h-96 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+              </div>
+              <div className="absolute -bottom-6 -right-6 bg-white p-4 rounded-xl shadow-lg border">
+                <div className="flex items-center space-x-3">
+                  <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center">
+                    <Star className="h-6 w-6 text-amber-600" />
+                  </div>
+                  <div>
+                    <div className="text-2xl font-bold text-gray-900">456</div>
+                    <div className="text-sm text-gray-600">Authors Supported</div>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Benefits Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-[#2A4759] mb-12">
-              Why Authors Choose AIbookReview
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {authorBenefits.map((benefit, index) => (
-                <FeatureCard key={index} icon={benefit.icon} title={benefit.title} description={benefit.description} />
-              ))}
+      {/* How It Works Section */}
+      <section id="how-it-works" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">How It Works for Authors</h2>
+            <p className="text-xl text-gray-600">Simple steps to elevate your manuscript</p>
+          </div>
+          <div className="grid md:grid-cols-4 gap-8">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                1
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Upload</h3>
+              <p className="text-gray-600">Upload your manuscript in .docx, .pdf, or .txt format</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                2
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Analyze</h3>
+              <p className="text-gray-600">Our AI performs detailed analysis and generates comprehensive reviews</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                3
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Improve</h3>
+              <p className="text-gray-600">Receive actionable feedback and an objective quality score (0-100)</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-amber-600 text-white rounded-full flex items-center justify-center mx-auto mb-4 text-2xl font-bold">
+                4
+              </div>
+              <h3 className="text-lg font-semibold mb-2">Connect</h3>
+              <p className="text-gray-600">Publish reviews to build credibility and connect with readers</p>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* How It Works Section - Vertical Layout with Arrows */}
-        <section className="py-16 bg-[#F2F2F2]">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-[#2A4759] mb-12">
-              How It Works for Authors
-            </h2>
-            <div className="max-w-3xl mx-auto">
-              {processSteps.map((step, index) => (
-                <div key={step.number} className="flex flex-col items-center">
-                  <Card className="w-full relative overflow-hidden">
-                    <CardHeader>
-                      <div className="flex items-center mb-4">
-                        <div className="w-12 h-12 rounded-full bg-[#2A4759] text-white flex items-center justify-center text-xl font-bold mr-4">
-                          {step.number}
-                        </div>
-                        <CardTitle className="text-xl text-[#2A4759]">{step.title}</CardTitle>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-gray-600 mb-4">{step.description}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {step.features.map((feature, featureIndex) => (
-                          <Badge key={featureIndex} variant="secondary" className="text-xs">
-                            {feature}
-                          </Badge>
-                        ))}
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  {/* Arrow pointing to next step */}
-                  {index < processSteps.length - 1 && (
-                    <div className="flex justify-center my-4">
-                      <div className="w-12 h-12 rounded-full bg-[#F79B72] flex items-center justify-center shadow-md">
-                        <ArrowDown className="h-6 w-6 text-white" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Pricing Section */}
-        <section className="py-16 bg-white">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-[#2A4759] mb-12">
-              Choose Your Review Level
-            </h2>
-            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-              {pricingPlans.map((plan, index) => (
-                <Card key={index} className={`relative ${plan.popular ? "border-[#F79B72] border-2" : ""}`}>
-                  {plan.popular && (
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                      <Badge className="bg-[#F79B72] text-white px-4 py-1">Most Popular</Badge>
-                    </div>
-                  )}
-                  <CardHeader className="text-center">
-                    <CardTitle className="text-2xl text-[#2A4759] mb-2">{plan.name}</CardTitle>
-                    <div className="text-4xl font-bold text-[#2A4759] mb-2">{plan.price}</div>
-                    <p className="text-gray-600">{plan.description}</p>
-                  </CardHeader>
-                  <CardContent>
-                    <ul className="space-y-3 mb-6">
-                      {plan.features.map((feature, featureIndex) => (
-                        <li key={featureIndex} className="flex items-start">
-                          <CheckCircle className="h-5 w-5 text-[#F79B72] mr-2 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                    <Link href="/author/upload">
-                      <Button
-                        className={`w-full ${plan.popular ? "bg-[#F79B72] hover:bg-[#e68a61] text-white" : "bg-[#2A4759] hover:bg-[#1e3544] text-white"}`}
-                      >
-                        {plan.cta}
-                        <ArrowRight className="ml-2 h-4 w-4" />
-                      </Button>
-                    </Link>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Testimonials Section */}
-        <section className="py-16 bg-[#F2F2F2]">
-          <div className="container mx-auto px-4">
-            <h2 className="text-3xl md:text-4xl font-bold text-center text-[#2A4759] mb-12">What Authors Are Saying</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              <Testimonial
-                quote="AIbookReview gave me the confidence to publish my first novel. The AI feedback was incredibly detailed and helped me improve my manuscript significantly."
-                author="Sarah J., Self-Published Author"
-                rating={5}
-              />
-              <Testimonial
-                quote="The service recommendations were spot-on. I found an amazing editor through their platform who really understood my genre."
-                author="Marcus R., Science Fiction Author"
-                rating={5}
-              />
-              <Testimonial
-                quote="I love the transparency. Readers can see the quality score and know they're getting a well-crafted book. It's helped my sales tremendously."
-                author="Elena V., Non-Fiction Author"
-                rating={5}
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* CTA Section */}
-        <section className="py-16 bg-[#2A4759] text-white">
-          <div className="container mx-auto px-4 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to Get Your AI Review?</h2>
-            <p className="text-lg mb-8 max-w-2xl mx-auto">
-              Join thousands of authors who have improved their manuscripts and connected with readers through
-              AIbookReview. Start with a free review today.
+      {/* Value Proposition */}
+      <section className="py-20 bg-white">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">Why Authors Choose AIbookReview</h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Transform your writing with AI-powered insights and build credibility with readers
             </p>
-            <Link href="/author/upload">
-              <Button className="bg-[#F79B72] hover:bg-[#e68a61] text-white text-lg py-6 px-8">
-                <Upload className="mr-2 h-5 w-5" />
-                Upload Your Manuscript Now
-                <ChevronRight className="ml-2 h-5 w-5" />
-              </Button>
-            </Link>
           </div>
-        </section>
-      </main>
 
-      <Footer />
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div>
+              <ul className="space-y-6">
+                <li className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Star className="h-6 w-6 text-yellow-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Objective AI-Powered Analysis</h3>
+                    <p className="text-gray-600">Get objective AI-powered manuscript analysis with detailed feedback</p>
+                  </div>
+                </li>
+                <li className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <CheckCircle className="h-6 w-6 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Actionable Insights</h3>
+                    <p className="text-gray-600">
+                      Receive actionable insights to improve plot, pacing, and character development
+                    </p>
+                  </div>
+                </li>
+                <li className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <Users className="h-6 w-6 text-blue-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Build Credibility</h3>
+                    <p className="text-gray-600">
+                      Build credibility with transparent quality scores that readers trust
+                    </p>
+                  </div>
+                </li>
+                <li className="flex items-start space-x-4">
+                  <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <TrendingUp className="h-6 w-6 text-purple-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2">Connect with Readers</h3>
+                    <p className="text-gray-600">
+                      Connect with quality-focused readers who appreciate good storytelling
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+            <div className="relative">
+              <Image
+                src="/placeholder.svg?height=400&width=600&text=Author+Dashboard"
+                alt="Author Dashboard Preview"
+                width={600}
+                height={400}
+                className="rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section id="testimonials" className="py-20 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">What Authors Say</h2>
+            <p className="text-xl text-gray-600">Real feedback from authors who've transformed their writing</p>
+          </div>
+          <div className="grid md:grid-cols-3 gap-8">
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center mb-6">
+                  <Image
+                    src="/placeholder.svg?height=50&width=50"
+                    alt="Author"
+                    width={50}
+                    height={50}
+                    className="rounded-full mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-lg">Sarah Johnson</h4>
+                    <p className="text-sm text-gray-600">Romance Author</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  "The AI analysis helped me identify plot holes I completely missed. My book's quality score improved
+                  from 72 to 89 after implementing the feedback!"
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center mb-6">
+                  <Image
+                    src="/placeholder.svg?height=50&width=50"
+                    alt="Author"
+                    width={50}
+                    height={50}
+                    className="rounded-full mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-lg">Michael Chen</h4>
+                    <p className="text-sm text-gray-600">Sci-Fi Author</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  "Having an objective quality score gives me confidence when approaching readers. The transparency
+                  builds trust that traditional publishing can't match."
+                </p>
+              </CardContent>
+            </Card>
+            <Card className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-8">
+                <div className="flex items-center mb-6">
+                  <Image
+                    src="/placeholder.svg?height=50&width=50"
+                    alt="Author"
+                    width={50}
+                    height={50}
+                    className="rounded-full mr-4"
+                  />
+                  <div>
+                    <h4 className="font-semibold text-lg">Emma Rodriguez</h4>
+                    <p className="text-sm text-gray-600">Mystery Author</p>
+                  </div>
+                </div>
+                <p className="text-gray-700 leading-relaxed">
+                  "The detailed feedback on pacing and character development was invaluable. I've never had such
+                  comprehensive analysis of my work."
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="py-20 bg-amber-600 text-white">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8 text-center">
+            <div>
+              <div className="text-4xl font-bold mb-2">2,847</div>
+              <div className="text-amber-100">Books Reviewed</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">456</div>
+              <div className="text-amber-100">Authors Supported</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">87</div>
+              <div className="text-amber-100">Average Quality Score</div>
+            </div>
+            <div>
+              <div className="text-4xl font-bold mb-2">94%</div>
+              <div className="text-amber-100">Author Satisfaction</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 bg-gray-900 text-white">
+        <div className="container mx-auto px-4 text-center">
+          <h2 className="text-4xl font-bold mb-6">Ready to Elevate Your Writing?</h2>
+          <p className="text-xl mb-8 text-gray-300 max-w-2xl mx-auto">
+            Join thousands of authors who trust AI-powered analysis to improve their craft
+          </p>
+          <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-lg px-8 py-3" asChild>
+            <Link href="/register">Start Your First Review</Link>
+          </Button>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-gray-50 py-12 border-t">
+        <div className="container mx-auto px-4">
+          <div className="grid md:grid-cols-4 gap-8">
+            <div>
+              <div className="flex items-center space-x-2 mb-4">
+                <BookOpen className="h-6 w-6 text-amber-600" />
+                <span className="text-xl font-bold">AIbookReview</span>
+              </div>
+              <p className="text-gray-600">Connecting authors and readers through AI-powered book analysis.</p>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">For Authors</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>
+                  <Link href="/how-it-works" className="hover:text-amber-600">
+                    How It Works
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/pricing" className="hover:text-amber-600">
+                    Pricing
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/dashboard" className="hover:text-amber-600">
+                    Dashboard
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">For Readers</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>
+                  <Link href="/discover" className="hover:text-amber-600">
+                    Discover Books
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/new-releases" className="hover:text-amber-600">
+                    New Releases
+                  </Link>
+                </li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="font-semibold mb-4">Support</h4>
+              <ul className="space-y-2 text-gray-600">
+                <li>
+                  <Link href="/help" className="hover:text-amber-600">
+                    Help Center
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-amber-600">
+                    Contact Us
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/privacy" className="hover:text-amber-600">
+                    Privacy Policy
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-200 mt-8 pt-8 text-center text-gray-600">
+            <p>&copy; 2024 AIbookReview.com. All rights reserved.</p>
+          </div>
+        </div>
+      </footer>
     </div>
   )
 }
