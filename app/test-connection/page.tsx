@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -14,7 +15,8 @@ interface ConnectionTest {
   message: string
 }
 
-export default function TestConnectionPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
+export default function TestConnectionPage() {
+  const searchParams = useSearchParams()
   const [tests, setTests] = useState<ConnectionTest[]>([
     { name: 'Supabase Connection', status: 'pending', message: 'Testing...' },
     { name: 'Database Tables', status: 'pending', message: 'Checking...' },
