@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { BookOpen, Shield, CheckCircle, AlertCircle } from "lucide-react"
+import { BookOpen, Shield, CheckCircle, AlertCircle, Mail } from "lucide-react"
 import { supabase } from '@/lib/supabase/client'
 
 export default function SetupAdminPage() {
@@ -16,22 +16,25 @@ export default function SetupAdminPage() {
     fullName: 'Admin User'
   })
   const [isLoading, setIsLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
+  const [message, setMessage] = useState<{ type: 'success' | 'error' | 'info', text: string } | null>(null)
+  const [needsConfirmation, setNeedsConfirmation] = useState(false)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setMessage(null)
+    setNeedsConfirmation(false)
 
     try {
-      // First, sign up the user
+      // First, sign up the user with email confirmation disabled for this session
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
             full_name: formData.fullName
-          }
+          },
+          emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       })
 
@@ -40,23 +43,17 @@ export default function SetupAdminPage() {
       }
 
       if (authData.user) {
-        // Wait a moment for the profile to be created by the trigger
-        await new Promise(resolve => setTimeout(resolve, 1000))
-
-        // Update the user's role to admin
-        const { error: updateError } = await supabase
-          .from('profiles')
-          .update({ role: 'admin' })
-          .eq('id', authData.user.id)
-
-        if (updateError) {
-          throw updateError
+        // Check if the user needs email confirmation
+        if (!authData.session) {
+          setNeedsConfirmation(true)
+          setMessage({
+            type: 'info',
+            text: 'Please check your email and click the confirmation link, then try signing in.'
+          })
+        } else {
+          // User is already confirmed, update role
+          await updateUserRole(authData.user.id)
         }
-
-        setMessage({
-          type: 'success',
-          text: `Admin user created successfully! You can now sign in with ${formData.email} and password ${formData.password}`
-        })
       }
     } catch (error: any) {
       console.error('Error creating admin user:', error)
@@ -69,9 +66,37 @@ export default function SetupAdminPage() {
     }
   }
 
-  const handleSignIn = async () => {
+  const updateUserRole = async (userId: string) => {
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      // Wait a moment for the profile to be created by the trigger
+      await new Promise(resolve => setTimeout(resolve, 1000))
+
+      // Update the user's role to admin
+      const { error: updateError } = await supabase
+        .from('profiles')
+        .update({ role: 'admin' })
+        .eq('id', userId)
+
+      if (updateError) {
+        throw updateError
+      }
+
+      setMessage({
+        type: 'success',
+        text: `Admin user created successfully! You can now sign in with ${formData.email}`
+      })
+    } catch (error: any) {
+      setMessage({
+        type: 'error',
+        text: error.message || 'Failed to update user role'
+      })
+    }
+  }
+
+  const handleSignIn = async () => {
+    setIsLoading(true)
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       })
@@ -80,12 +105,50 @@ export default function SetupAdminPage() {
         throw error
       }
 
-      // Redirect to admin panel
-      window.location.href = '/admin'
+      if (data.user && data.session) {
+        // If this is the first successful sign-in, update the role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profile?.role !== 'admin') {
+          await updateUserRole(data.user.id)
+        }
+
+        // Redirect to admin panel
+        window.location.href = '/admin'
+      }
     } catch (error: any) {
       setMessage({
         type: 'error',
-        text: error.message || 'Failed to sign in'
+        text: error.message || 'Failed to sign in. Make sure you have confirmed your email.'
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const handleResendConfirmation = async () => {
+    try {
+      const { error } = await supabase.auth.resend({
+        type: 'signup',
+        email: formData.email
+      })
+
+      if (error) {
+        throw error
+      }
+
+      setMessage({
+        type: 'info',
+        text: 'Confirmation email resent! Please check your inbox.'
+      })
+    } catch (error: any) {
+      setMessage({
+        type: 'error',
+        text: error.message || 'Failed to resend confirmation email'
       })
     }
   }
@@ -172,25 +235,48 @@ export default function SetupAdminPage() {
               </form>
 
               {message && (
-                <Alert className={`mt-4 ${message.type === 'success' ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'}`}>
+                <Alert className={`mt-4 ${
+                  message.type === 'success' ? 'border-green-200 bg-green-50' : 
+                  message.type === 'info' ? 'border-blue-200 bg-blue-50' :
+                  'border-red-200 bg-red-50'
+                }`}>
                   {message.type === 'success' ? (
                     <CheckCircle className="h-4 w-4 text-green-600" />
+                  ) : message.type === 'info' ? (
+                    <Mail className="h-4 w-4 text-blue-600" />
                   ) : (
                     <AlertCircle className="h-4 w-4 text-red-600" />
                   )}
-                  <AlertDescription className={message.type === 'success' ? 'text-green-800' : 'text-red-800'}>
+                  <AlertDescription className={
+                    message.type === 'success' ? 'text-green-800' : 
+                    message.type === 'info' ? 'text-blue-800' :
+                    'text-red-800'
+                  }>
                     {message.text}
                   </AlertDescription>
                 </Alert>
               )}
 
-              {message?.type === 'success' && (
+              {needsConfirmation && (
+                <div className="mt-4 space-y-3">
+                  <Button 
+                    onClick={handleResendConfirmation}
+                    variant="outline"
+                    className="w-full"
+                  >
+                    Resend Confirmation Email
+                  </Button>
+                </div>
+              )}
+
+              {(message?.type === 'success' || !needsConfirmation) && (
                 <div className="mt-4 space-y-3">
                   <Button 
                     onClick={handleSignIn}
                     className="w-full bg-amber-600 hover:bg-amber-700"
+                    disabled={isLoading}
                   >
-                    Sign In as Admin
+                    {isLoading ? 'Signing In...' : 'Sign In as Admin'}
                   </Button>
                   <div className="text-center">
                     <Button variant="link" onClick={() => window.location.href = '/admin'}>
@@ -203,14 +289,36 @@ export default function SetupAdminPage() {
               <Alert className="mt-6 border-amber-200 bg-amber-50">
                 <AlertCircle className="h-4 w-4 text-amber-600" />
                 <AlertDescription className="text-amber-800">
-                  <strong>For Testing Only:</strong> This creates a real admin user in your database. 
-                  In production, you would manage admin users through your Supabase dashboard or a more secure process.
+                  <strong>Email Confirmation:</strong> If email confirmation is enabled in your Supabase project, 
+                  you'll need to check your email and click the confirmation link before you can sign in.
                 </AlertDescription>
               </Alert>
             </CardContent>
           </Card>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8">
+            <Card className="border-amber-200 bg-amber-50">
+              <CardHeader>
+                <CardTitle className="text-lg">Disable Email Confirmation (Optional)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-amber-800 mb-3">
+                  For easier testing, you can disable email confirmation in your Supabase project:
+                </p>
+                <ol className="text-sm text-amber-800 space-y-1 list-decimal list-inside">
+                  <li>Go to your Supabase Dashboard</li>
+                  <li>Navigate to Authentication → Settings</li>
+                  <li>Turn off "Enable email confirmations"</li>
+                  <li>Save the changes</li>
+                </ol>
+                <p className="text-xs text-amber-700 mt-3">
+                  Remember to re-enable this in production for security.
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="mt-6 text-center">
             <h3 className="text-lg font-semibold mb-3">Default Admin Credentials</h3>
             <div className="bg-gray-50 rounded-lg p-4 text-left">
               <p><strong>Email:</strong> admin@aibookreview.com</p>
