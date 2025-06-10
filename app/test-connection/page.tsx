@@ -43,8 +43,8 @@ export default function TestConnectionPage() {
     }
 
     try {
-      // Test 2: Check all tables exist
-      const tables = ['profiles', 'books', 'reviews', 'llm_configs', 'prompts', 'reading_lists']
+      // Test 2: Check all tables exist (using correct table names)
+      const tables = ['profiles', 'books', 'ai_reviews', 'llm_configs', 'prompts', 'reading_lists']
       for (const table of tables) {
         const { error } = await supabase.from(table).select('count').limit(1)
         if (error) throw new Error(`Table ${table} not found`)
