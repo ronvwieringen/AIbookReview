@@ -2,26 +2,92 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { BookOpen } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { BookOpen, CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { supabase } from '@/lib/supabase/client'
 
 export default function RegisterPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     confirmPassword: "",
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle registration logic here
-    console.log("Registration data:", formData)
+    setIsLoading(true)
+    setError(null)
+    setSuccess(null)
+
+    // Validate passwords match
+    if (formData.password !== formData.confirmPassword) {
+      setError("Passwords don't match")
+      setIsLoading(false)
+      return
+    }
+
+    try {
+      // Sign up the user
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: formData.email,
+        password: formData.password,
+        options: {
+          data: {
+            full_name: formData.name
+          }
+        }
+      })
+
+      if (signUpError) {
+        throw signUpError
+      }
+
+      if (data.user) {
+        if (data.session) {
+          // User is automatically signed in (email confirmation disabled)
+          setSuccess("Account created successfully! Redirecting...")
+          
+          // Wait a moment for the profile to be created by the trigger
+          await new Promise(resolve => setTimeout(resolve, 1000))
+          
+          // Get user profile to determine redirect
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('role')
+            .eq('id', data.user.id)
+            .single()
+
+          // Redirect based on role
+          if (profile?.role === 'admin') {
+            router.push('/admin')
+          } else if (profile?.role === 'author') {
+            router.push('/author/dashboard')
+          } else {
+            router.push('/dashboard')
+          }
+        } else {
+          // Email confirmation required
+          setSuccess("Please check your email and click the confirmation link to complete registration.")
+        }
+      }
+    } catch (error: any) {
+      console.error('Registration error:', error)
+      setError(error.message || 'Failed to create account')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -65,6 +131,20 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="pb-8">
+            {error && (
+              <Alert className="mb-4 border-red-200 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800">{error}</AlertDescription>
+              </Alert>
+            )}
+
+            {success && (
+              <Alert className="mb-4 border-green-200 bg-green-50">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">{success}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name" className="text-sm font-medium text-gray-900">
@@ -78,6 +158,7 @@ export default function RegisterPage() {
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -93,6 +174,7 @@ export default function RegisterPage() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -108,6 +190,7 @@ export default function RegisterPage() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -123,20 +206,25 @@ export default function RegisterPage() {
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-lg py-3">
-                Create Account
+              <Button 
+                type="submit" 
+                className="w-full bg-amber-600 hover:bg-amber-700 text-lg py-3"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Creating Account...' : 'Create Account'}
               </Button>
 
               <Separator className="my-6" />
 
               <div className="space-y-3">
-                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50">
+                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50" disabled>
                   Continue with Google
                 </Button>
-                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50">
+                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50" disabled>
                   Continue with Microsoft
                 </Button>
               </div>

@@ -2,24 +2,72 @@
 
 import type React from "react"
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { BookOpen } from "lucide-react"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { BookOpen, CheckCircle, AlertCircle } from "lucide-react"
 import Link from "next/link"
+import { supabase } from '@/lib/supabase/client'
 
 export default function LoginPage() {
+  const router = useRouter()
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    // Handle login logic here
-    console.log("Login data:", formData)
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      // Sign in the user
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email: formData.email,
+        password: formData.password
+      })
+
+      if (signInError) {
+        throw signInError
+      }
+
+      if (data.user && data.session) {
+        // Get user profile to determine redirect
+        const { data: profile, error: profileError } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', data.user.id)
+          .single()
+
+        if (profileError) {
+          console.error('Profile fetch error:', profileError)
+          // If we can't get the profile, default to dashboard
+          router.push('/dashboard')
+          return
+        }
+
+        // Redirect based on role
+        if (profile.role === 'admin') {
+          router.push('/admin')
+        } else if (profile.role === 'author') {
+          router.push('/author/dashboard')
+        } else {
+          router.push('/dashboard')
+        }
+      }
+    } catch (error: any) {
+      console.error('Login error:', error)
+      setError(error.message || 'Failed to sign in')
+    } finally {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -61,6 +109,13 @@ export default function LoginPage() {
             <CardDescription className="text-lg text-gray-600">Sign in to your account to continue</CardDescription>
           </CardHeader>
           <CardContent className="pb-8">
+            {error && (
+              <Alert className="mb-4 border-red-200 bg-red-50">
+                <AlertCircle className="h-4 w-4 text-red-600" />
+                <AlertDescription className="text-red-800">{error}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-sm font-medium text-gray-900">
@@ -74,6 +129,7 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
@@ -89,20 +145,25 @@ export default function LoginPage() {
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   required
+                  disabled={isLoading}
                 />
               </div>
 
-              <Button type="submit" className="w-full bg-amber-600 hover:bg-amber-700 text-lg py-3">
-                Sign In
+              <Button 
+                type="submit" 
+                className="w-full bg-amber-600 hover:bg-amber-700 text-lg py-3"
+                disabled={isLoading}
+              >
+                {isLoading ? 'Signing In...' : 'Sign In'}
               </Button>
 
               <Separator className="my-6" />
 
               <div className="space-y-3">
-                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50">
+                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50" disabled>
                   Continue with Google
                 </Button>
-                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50">
+                <Button variant="outline" className="w-full border-gray-200 hover:bg-gray-50" disabled>
                   Continue with Microsoft
                 </Button>
               </div>
