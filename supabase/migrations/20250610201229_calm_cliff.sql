@@ -106,6 +106,19 @@ CREATE TABLE IF NOT EXISTS book_purchase_links (
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- Enhanced prompts table with your structure
+CREATE TABLE IF NOT EXISTS prompts (
+  id SERIAL PRIMARY KEY,
+  prompt_name TEXT NOT NULL,
+  prompt_type prompt_type NOT NULL,
+  prompt_text TEXT NOT NULL,
+  version INTEGER NOT NULL DEFAULT 1,
+  is_active BOOLEAN DEFAULT TRUE,
+  updated_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(prompt_name, version)
+);
+
+
 -- Enhanced AI reviews with score breakdown from your schema
 CREATE TABLE IF NOT EXISTS ai_reviews (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -157,17 +170,6 @@ CREATE TABLE IF NOT EXISTS reader_reviews (
 -- 3. Admin & System Configuration Tables
 -- =================================================================
 
--- Enhanced prompts table with your structure
-CREATE TABLE IF NOT EXISTS prompts (
-  id SERIAL PRIMARY KEY,
-  prompt_name TEXT NOT NULL,
-  prompt_type prompt_type NOT NULL,
-  prompt_text TEXT NOT NULL,
-  version INTEGER NOT NULL DEFAULT 1,
-  is_active BOOLEAN DEFAULT TRUE,
-  updated_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(prompt_name, version)
-);
 
 -- LLM Configurations table (keeping from original)
 CREATE TABLE IF NOT EXISTS llm_configs (
