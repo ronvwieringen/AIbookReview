@@ -1,8 +1,8 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
@@ -15,12 +15,40 @@ import { supabase } from '@/lib/supabase/client'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const redirectTo = searchParams?.get('redirectTo') || '/dashboard'
+  
   const [formData, setFormData] = useState({
     email: "",
     password: "",
   })
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // Check if user is already logged in
+  useEffect(() => {
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        // User is already logged in, redirect based on role
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('id', session.user.id)
+          .single()
+
+        if (profile?.role === 'admin') {
+          router.push('/admin')
+        } else if (profile?.role === 'author') {
+          router.push('/author/dashboard')
+        } else {
+          router.push('/dashboard')
+        }
+      }
+    }
+    
+    checkSession()
+  }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -49,12 +77,14 @@ export default function LoginPage() {
         if (profileError) {
           console.error('Profile fetch error:', profileError)
           // If we can't get the profile, default to dashboard
-          router.push('/dashboard')
+          router.push(redirectTo)
           return
         }
 
-        // Redirect based on role
-        if (profile.role === 'admin') {
+        // Redirect based on role or to the requested page
+        if (redirectTo !== '/dashboard') {
+          router.push(redirectTo)
+        } else if (profile.role === 'admin') {
           router.push('/admin')
         } else if (profile.role === 'author') {
           router.push('/author/dashboard')
