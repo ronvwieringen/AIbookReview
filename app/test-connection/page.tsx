@@ -14,7 +14,7 @@ interface ConnectionTest {
   message: string
 }
 
-export default function TestConnectionPage() {
+export default function TestConnectionPage({ searchParams }: { searchParams: { [key: string]: string | string[] | undefined } }) {
   const [tests, setTests] = useState<ConnectionTest[]>([
     { name: 'Supabase Connection', status: 'pending', message: 'Testing...' },
     { name: 'Database Tables', status: 'pending', message: 'Checking...' },
