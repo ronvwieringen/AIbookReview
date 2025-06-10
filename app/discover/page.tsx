@@ -21,7 +21,7 @@ const mockBooks = [
     language: "English",
     reviewDate: "2024-01-15",
     views: 234,
-    cover: "/placeholder.svg?height=300&width=200",
+    cover: "/placeholder.svg?height=300&width=200&text=The+Digital+Frontier",
     summary: "A thrilling journey through virtual worlds where reality and digital existence blur.",
     buyLinks: ["Amazon", "Barnes & Noble"],
   },
@@ -34,7 +34,7 @@ const mockBooks = [
     language: "English",
     reviewDate: "2024-01-10",
     views: 456,
-    cover: "/placeholder.svg?height=300&width=200",
+    cover: "/placeholder.svg?height=300&width=200&text=Love+in+the+Time+of+AI",
     summary: "A heartwarming story about finding love in an increasingly digital world.",
     buyLinks: ["Amazon", "Apple Books"],
   },
@@ -47,7 +47,7 @@ const mockBooks = [
     language: "English",
     reviewDate: "2024-01-05",
     views: 189,
-    cover: "/placeholder.svg?height=300&width=200",
+    cover: "/placeholder.svg?height=300&width=200&text=Shadows+of+Tomorrow",
     summary: "A gripping mystery that keeps readers guessing until the very last page.",
     buyLinks: ["Amazon", "Kobo"],
   },
@@ -60,7 +60,7 @@ const mockBooks = [
     language: "English",
     reviewDate: "2024-01-01",
     views: 678,
-    cover: "/placeholder.svg?height=300&width=200",
+    cover: "/placeholder.svg?height=300&width=200&text=The+Quantum+Garden",
     summary: "An epic tale of quantum physics and parallel universes colliding.",
     buyLinks: ["Amazon", "Google Books"],
   },
@@ -224,11 +224,14 @@ export default function DiscoverPage() {
               <CardContent className="p-0">
                 <div className="relative">
                   <Image
-                    src={book.cover || "/placeholder.svg"}
+                    src={book.cover || "/placeholder.svg?height=300&width=200&text=Book+Cover"}
                     alt={book.title}
                     width={200}
                     height={300}
                     className="w-full h-64 object-cover rounded-t-lg"
+                    onError={(e) => {
+                      e.currentTarget.src = "/placeholder.svg?height=300&width=200&text=Book+Cover"
+                    }}
                   />
                   <div className="absolute top-3 right-3">
                     <Badge className="bg-amber-600 hover:bg-amber-700 text-white font-bold">

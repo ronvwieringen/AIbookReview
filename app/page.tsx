@@ -267,7 +267,7 @@ export default function HomePage() {
             Join thousands of readers who trust AI-powered analysis to find quality self-published books
           </p>
           <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-lg px-8 py-3" asChild>
-            <Link href="/register">Start Reading Today</Link>
+            <Link href="/discover">Browse Reviews</Link>
           </Button>
         </div>
       </section>
