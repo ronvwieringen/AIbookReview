@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
         break
       case 'score':
       default:
-        query = query.order('ai_reviews.ai_quality_score', { ascending: false })
+        query = query.order('ai_quality_score', { ascending: false, foreignTable: 'ai_reviews' })
         break
     }
     
