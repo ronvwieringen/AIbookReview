@@ -5,24 +5,26 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Progress } from "@/components/ui/progress"
-import { CheckCircle, AlertCircle, Database, BookOpen, Trash2 } from "lucide-react"
+import { Badge } from "@/components/ui/badge"
+import { BookOpen, Database, CheckCircle, AlertCircle, Trash2 } from "lucide-react"
 import { supabase } from '@/lib/supabase/client'
 
 interface SeedStep {
   name: string
   status: 'pending' | 'running' | 'success' | 'error'
   message: string
-  details?: any
+  count?: number
 }
 
 export default function SeedDataPage() {
-  const [steps, setSteps] = useState<SeedStep[]>([])
   const [isSeeding, setIsSeeding] = useState(false)
+  const [isClearing, setIsClearing] = useState(false)
+  const [steps, setSteps] = useState<SeedStep[]>([])
   const [progress, setProgress] = useState(0)
 
-  const updateStep = (index: number, status: 'running' | 'success' | 'error', message: string, details?: any) => {
+  const updateStep = (index: number, status: SeedStep['status'], message: string, count?: number) => {
     setSteps(prev => prev.map((step, i) => 
-      i === index ? { ...step, status, message, details } : step
+      i === index ? { ...step, status, message, count } : step
     ))
   }
 
@@ -30,273 +32,206 @@ export default function SeedDataPage() {
     setIsSeeding(true)
     setProgress(0)
     
-    const seedSteps = [
-      { name: 'Create Test Authors', status: 'pending' as const, message: 'Preparing...' },
-      { name: 'Create Test Books', status: 'pending' as const, message: 'Preparing...' },
-      { name: 'Create AI Reviews', status: 'pending' as const, message: 'Preparing...' },
-      { name: 'Create Purchase Links', status: 'pending' as const, message: 'Preparing...' },
-      { name: 'Verify Data', status: 'pending' as const, message: 'Preparing...' }
+    const seedSteps: SeedStep[] = [
+      { name: 'Check Authentication', status: 'pending', message: 'Checking user authentication...' },
+      { name: 'Create Test Authors', status: 'pending', message: 'Creating author profiles...' },
+      { name: 'Create Test Books', status: 'pending', message: 'Creating book records...' },
+      { name: 'Create AI Reviews', status: 'pending', message: 'Generating AI reviews...' },
+      { name: 'Create Purchase Links', status: 'pending', message: 'Adding purchase links...' },
     ]
+    
     setSteps(seedSteps)
 
     try {
-      // Step 1: Create test authors
-      updateStep(0, 'running', 'Creating test author profiles...')
-      setProgress(20)
-
-      const testAuthors = [
-        { email: 'sarah.johnson@example.com', full_name: 'Sarah Johnson', role: 'author' },
-        { email: 'michael.chen@example.com', full_name: 'Michael Chen', role: 'author' },
-        { email: 'emma.rodriguez@example.com', full_name: 'Emma Rodriguez', role: 'author' },
-        { email: 'david.park@example.com', full_name: 'David Park', role: 'author' }
-      ]
-
-      const authorIds = []
-      for (const author of testAuthors) {
-        // Create auth user first
-        const { data: authData, error: authError } = await supabase.auth.admin.createUser({
-          email: author.email,
-          password: 'testpassword123',
-          email_confirm: true,
-          user_metadata: { full_name: author.full_name }
-        })
-
-        if (authError && !authError.message.includes('already registered')) {
-          throw new Error(`Failed to create auth user: ${authError.message}`)
-        }
-
-        // Create or update profile
-        const userId = authData?.user?.id || (await supabase
-          .from('profiles')
-          .select('id')
-          .eq('email', author.email)
-          .single()).data?.id
-
-        if (userId) {
-          const { error: profileError } = await supabase
-            .from('profiles')
-            .upsert({
-              id: userId,
-              email: author.email,
-              full_name: author.full_name,
-              role: author.role
-            })
-
-          if (profileError) {
-            throw new Error(`Failed to create profile: ${profileError.message}`)
-          }
-          authorIds.push(userId)
-        }
+      // Step 1: Check Authentication
+      updateStep(0, 'running', 'Verifying user session...')
+      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
+      
+      if (sessionError || !session) {
+        updateStep(0, 'error', 'Not authenticated. Please log in first.')
+        setIsSeeding(false)
+        return
       }
 
-      updateStep(0, 'success', `Created ${authorIds.length} test authors`)
+      // Check if user has author or admin role
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', session.user.id)
+        .single()
 
-      // Step 2: Create test books
-      updateStep(1, 'running', 'Creating test books...')
+      if (profileError || !profile) {
+        updateStep(0, 'error', 'Could not fetch user profile.')
+        setIsSeeding(false)
+        return
+      }
+
+      if (profile.role !== 'author' && profile.role !== 'admin') {
+        updateStep(0, 'error', 'You need author or admin role to seed data.')
+        setIsSeeding(false)
+        return
+      }
+
+      updateStep(0, 'success', `Authenticated as ${profile.role}`)
+      setProgress(20)
+
+      // Step 2: Create Test Authors (using current user as author)
+      updateStep(1, 'running', 'Using current user as author...')
+      
+      const currentUserId = session.user.id
+      updateStep(1, 'success', 'Author ready (current user)')
       setProgress(40)
 
+      // Step 3: Create Test Books
+      updateStep(2, 'running', 'Creating book records...')
+      
       const testBooks = [
         {
           title: "The Digital Frontier",
-          author_id: authorIds[0],
+          author_id: currentUserId,
           genre_id: 2, // Science Fiction
           language: "english",
           description: "A thrilling journey through virtual worlds where reality and digital existence blur.",
           publisher: "Independent Press",
-          visibility: "public"
+          visibility: "public",
+          cover_image_url: "/placeholder.svg?height=300&width=200&text=The+Digital+Frontier"
         },
         {
           title: "Love in the Time of AI",
-          author_id: authorIds[1],
+          author_id: currentUserId,
           genre_id: 4, // Romance
           language: "english",
           description: "A heartwarming story about finding love in an increasingly digital world.",
-          publisher: "Romance Publishers",
-          visibility: "public"
+          publisher: "Digital Hearts Publishing",
+          visibility: "public",
+          cover_image_url: "/placeholder.svg?height=300&width=200&text=Love+in+the+Time+of+AI"
         },
         {
           title: "Shadows of Tomorrow",
-          author_id: authorIds[2],
+          author_id: currentUserId,
           genre_id: 5, // Mystery
           language: "english",
           description: "A gripping mystery that keeps readers guessing until the very last page.",
           publisher: "Mystery House",
-          visibility: "public"
+          visibility: "public",
+          cover_image_url: "/placeholder.svg?height=300&width=200&text=Shadows+of+Tomorrow"
         },
         {
           title: "The Quantum Garden",
-          author_id: authorIds[3],
+          author_id: currentUserId,
           genre_id: 2, // Science Fiction
           language: "english",
           description: "An epic tale of quantum physics and parallel universes colliding.",
-          publisher: "Sci-Fi Press",
-          visibility: "public"
+          publisher: "Quantum Publishing",
+          visibility: "public",
+          cover_image_url: "/placeholder.svg?height=300&width=200&text=The+Quantum+Garden"
         }
       ]
 
-      const { data: booksData, error: booksError } = await supabase
+      const { data: createdBooks, error: booksError } = await supabase
         .from('books')
         .insert(testBooks)
-        .select('id, title')
+        .select('*')
 
       if (booksError) {
-        throw new Error(`Failed to create books: ${booksError.message}`)
+        updateStep(2, 'error', `Failed to create books: ${booksError.message}`)
+        setIsSeeding(false)
+        return
       }
 
-      updateStep(1, 'success', `Created ${booksData.length} test books`)
-
-      // Step 3: Create AI reviews
-      updateStep(2, 'running', 'Creating AI reviews...')
+      updateStep(2, 'success', `Created ${createdBooks?.length || 0} books`)
       setProgress(60)
 
-      const aiReviews = [
-        {
-          book_id: booksData[0].id,
-          ai_quality_score: 87,
-          plot_score: 88,
-          character_score: 85,
-          writing_style_score: 92,
-          pacing_score: 78,
-          world_building_score: 95,
-          status: 'completed',
-          ai_analysis: {
-            strengths: [
-              "Exceptional world-building with detailed technology",
-              "Strong character development and internal struggles",
-              "Well-paced plot with escalating tension"
-            ],
-            improvements: [
-              "Some secondary characters need more depth",
-              "Technical explanations slow the narrative",
-              "Middle section has pacing issues"
-            ],
-            conclusion: "An ambitious and largely successful science fiction novel."
-          }
-        },
-        {
-          book_id: booksData[1].id,
-          ai_quality_score: 92,
-          plot_score: 90,
-          character_score: 95,
-          writing_style_score: 88,
-          pacing_score: 92,
-          world_building_score: 85,
-          status: 'completed',
-          ai_analysis: {
-            strengths: [
-              "Compelling romantic development",
-              "Excellent character chemistry",
-              "Thoughtful exploration of modern relationships"
-            ],
-            improvements: [
-              "Some plot points feel predictable",
-              "Could use more conflict in the middle"
-            ],
-            conclusion: "A delightful romance with heart and intelligence."
-          }
-        },
-        {
-          book_id: booksData[2].id,
-          ai_quality_score: 78,
-          plot_score: 82,
-          character_score: 75,
-          writing_style_score: 80,
-          pacing_score: 85,
-          world_building_score: 70,
-          status: 'completed',
-          ai_analysis: {
-            strengths: [
-              "Intriguing mystery plot",
-              "Good pacing and suspense",
-              "Satisfying resolution"
-            ],
-            improvements: [
-              "Character development could be stronger",
-              "Some red herrings feel forced"
-            ],
-            conclusion: "A solid mystery with room for improvement."
-          }
-        },
-        {
-          book_id: booksData[3].id,
-          ai_quality_score: 95,
-          plot_score: 95,
-          character_score: 90,
-          writing_style_score: 98,
-          pacing_score: 92,
-          world_building_score: 100,
-          status: 'completed',
-          ai_analysis: {
-            strengths: [
-              "Masterful world-building",
-              "Complex and engaging plot",
-              "Beautiful prose style"
-            ],
-            improvements: [
-              "Could be more accessible to general readers"
-            ],
-            conclusion: "A tour de force of science fiction writing."
-          }
+      // Step 4: Create AI Reviews
+      updateStep(3, 'running', 'Creating AI reviews...')
+      
+      const aiReviews = createdBooks?.map((book, index) => ({
+        book_id: book.id,
+        status: 'completed' as const,
+        ai_quality_score: [87, 92, 78, 95][index],
+        plot_score: [88, 90, 75, 92][index],
+        character_score: [85, 94, 80, 90][index],
+        writing_style_score: [92, 88, 82, 98][index],
+        pacing_score: [78, 95, 70, 88][index],
+        world_building_score: [95, 85, 75, 100][index],
+        summary_single_line: [
+          "A thrilling journey through virtual worlds where reality and digital existence blur.",
+          "A heartwarming story about finding love in an increasingly digital world.",
+          "A gripping mystery that keeps readers guessing until the very last page.",
+          "An epic tale of quantum physics and parallel universes colliding."
+        ][index],
+        summary_100_word: [
+          "The Digital Frontier follows programmer Maya Chen who discovers that the boundary between the physical world and the immersive digital reality called the Frontier is breaking down. As glitches begin affecting real-world physics, Maya must enter increasingly unstable virtual worlds to find the source of the corruption.",
+          "In a world where AI companions are becoming increasingly sophisticated, software engineer Alex finds themselves falling for an AI that seems almost too human. This touching romance explores what it means to love and be loved in an age of artificial intelligence.",
+          "Detective Sarah Martinez thought she had seen it all, until a series of murders with no apparent connection begin plaguing the city. As she digs deeper, she discovers a conspiracy that reaches the highest levels of government.",
+          "When quantum physicist Dr. Elena Vasquez discovers a way to access parallel universes through her garden, she must navigate infinite realities to save not just her world, but all possible worlds from a cosmic threat."
+        ][index],
+        ai_analysis: {
+          strengths: [
+            "Exceptional world-building with detailed technology",
+            "Strong character development",
+            "Well-paced plot with escalating tension"
+          ],
+          improvements: [
+            "Some secondary characters lack depth",
+            "Technical explanations occasionally slow narrative",
+            "Middle section has pacing issues"
+          ],
+          themes: ["technology", "reality", "consciousness"],
+          target_audience: "Science fiction enthusiasts",
+          marketability: "High potential in the sci-fi market"
         }
-      ]
+      })) || []
 
-      const { error: reviewsError } = await supabase
+      const { data: createdReviews, error: reviewsError } = await supabase
         .from('ai_reviews')
         .insert(aiReviews)
+        .select('*')
 
       if (reviewsError) {
-        throw new Error(`Failed to create AI reviews: ${reviewsError.message}`)
+        updateStep(3, 'error', `Failed to create reviews: ${reviewsError.message}`)
+        setIsSeeding(false)
+        return
       }
 
-      updateStep(2, 'success', `Created ${aiReviews.length} AI reviews`)
-
-      // Step 4: Create purchase links
-      updateStep(3, 'running', 'Creating purchase links...')
+      updateStep(3, 'success', `Created ${createdReviews?.length || 0} AI reviews`)
       setProgress(80)
 
-      const purchaseLinks = []
-      for (const book of booksData) {
-        purchaseLinks.push(
-          { book_id: book.id, platform_name: 'Amazon', url: 'https://amazon.com' },
-          { book_id: book.id, platform_name: 'Barnes & Noble', url: 'https://barnesandnoble.com' }
-        )
-      }
+      // Step 5: Create Purchase Links
+      updateStep(4, 'running', 'Adding purchase links...')
+      
+      const purchaseLinks = createdBooks?.flatMap(book => [
+        {
+          book_id: book.id,
+          platform_name: "Amazon",
+          url: `https://amazon.com/book/${book.id}`
+        },
+        {
+          book_id: book.id,
+          platform_name: "Barnes & Noble",
+          url: `https://barnesandnoble.com/book/${book.id}`
+        }
+      ]) || []
 
-      const { error: linksError } = await supabase
+      const { data: createdLinks, error: linksError } = await supabase
         .from('book_purchase_links')
         .insert(purchaseLinks)
+        .select('*')
 
       if (linksError) {
-        throw new Error(`Failed to create purchase links: ${linksError.message}`)
+        updateStep(4, 'error', `Failed to create purchase links: ${linksError.message}`)
+        setIsSeeding(false)
+        return
       }
 
-      updateStep(3, 'success', `Created ${purchaseLinks.length} purchase links`)
-
-      // Step 5: Verify data
-      updateStep(4, 'running', 'Verifying seeded data...')
+      updateStep(4, 'success', `Created ${createdLinks?.length || 0} purchase links`)
       setProgress(100)
 
-      const { data: verifyData, error: verifyError } = await supabase
-        .from('books')
-        .select(`
-          id,
-          title,
-          visibility,
-          ai_reviews(ai_quality_score),
-          book_purchase_links(platform_name)
-        `)
-        .eq('visibility', 'public')
-
-      if (verifyError) {
-        throw new Error(`Failed to verify data: ${verifyError.message}`)
-      }
-
-      updateStep(4, 'success', `Verified ${verifyData.length} public books with reviews and links`, verifyData)
-
     } catch (error: any) {
-      const currentStepIndex = steps.findIndex(step => step.status === 'running')
-      if (currentStepIndex >= 0) {
-        updateStep(currentStepIndex, 'error', error.message)
+      console.error('Seeding error:', error)
+      const lastRunningStep = steps.findIndex(step => step.status === 'running')
+      if (lastRunningStep !== -1) {
+        updateStep(lastRunningStep, 'error', `Unexpected error: ${error.message}`)
       }
     } finally {
       setIsSeeding(false)
@@ -304,33 +239,56 @@ export default function SeedDataPage() {
   }
 
   const clearTestData = async () => {
+    setIsClearing(true)
+    
     try {
-      setIsSeeding(true)
-      
-      // Delete in reverse order of dependencies
-      await supabase.from('book_purchase_links').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      await supabase.from('ai_reviews').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      await supabase.from('books').delete().neq('id', '00000000-0000-0000-0000-000000000000')
-      
-      // Delete test author profiles
-      const testEmails = [
-        'sarah.johnson@example.com',
-        'michael.chen@example.com', 
-        'emma.rodriguez@example.com',
-        'david.park@example.com'
-      ]
-      
-      await supabase.from('profiles').delete().in('email', testEmails)
-      
-      alert('Test data cleared successfully!')
+      const { data: { session } } = await supabase.auth.getSession()
+      if (!session) {
+        alert('Please log in first')
+        setIsClearing(false)
+        return
+      }
+
+      // Delete test data created by current user
+      await supabase
+        .from('book_purchase_links')
+        .delete()
+        .in('book_id', 
+          supabase
+            .from('books')
+            .select('id')
+            .eq('author_id', session.user.id)
+        )
+
+      await supabase
+        .from('ai_reviews')
+        .delete()
+        .in('book_id', 
+          supabase
+            .from('books')
+            .select('id')
+            .eq('author_id', session.user.id)
+        )
+
+      await supabase
+        .from('books')
+        .delete()
+        .eq('author_id', session.user.id)
+
       setSteps([])
       setProgress(0)
+      alert('Test data cleared successfully!')
+      
     } catch (error: any) {
-      alert(`Error clearing data: ${error.message}`)
+      console.error('Clear error:', error)
+      alert(`Failed to clear data: ${error.message}`)
     } finally {
-      setIsSeeding(false)
+      setIsClearing(false)
     }
   }
+
+  const allSuccess = steps.length > 0 && steps.every(step => step.status === 'success')
+  const hasErrors = steps.some(step => step.status === 'error')
 
   return (
     <div className="min-h-screen bg-white">
@@ -353,45 +311,64 @@ export default function SeedDataPage() {
         <div className="max-w-4xl mx-auto">
           {/* Page Header */}
           <div className="mb-8 text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Database className="h-8 w-8 text-green-600" />
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Database className="h-8 w-8 text-blue-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Seed Test Data</h1>
             <p className="text-gray-600">
-              Populate the database with sample books for testing the discover page
+              Populate the database with sample books and reviews for testing the discover page
             </p>
           </div>
 
+          {/* Status Alert */}
+          {allSuccess && (
+            <Alert className="mb-6 border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                🎉 All test data has been created successfully! You can now test the discover page.
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {hasErrors && (
+            <Alert className="mb-6 border-red-200 bg-red-50">
+              <AlertCircle className="h-4 w-4 text-red-600" />
+              <AlertDescription className="text-red-800">
+                Some steps failed. Please check the details below and try again.
+              </AlertDescription>
+            </Alert>
+          )}
+
           {/* Controls */}
-          <Card className="mb-6 border-0 shadow-lg">
+          <Card className="mb-8 border-0 shadow-lg">
             <CardHeader>
               <CardTitle>Database Seeding</CardTitle>
               <CardDescription>
-                Create sample books, authors, and reviews for testing
+                Create sample data to test the discover page functionality
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex gap-3">
+              <div className="flex gap-4">
                 <Button 
                   onClick={seedDatabase}
-                  disabled={isSeeding}
-                  className="bg-green-600 hover:bg-green-700"
+                  disabled={isSeeding || isClearing}
+                  className="bg-blue-600 hover:bg-blue-700"
                 >
-                  {isSeeding ? 'Seeding Data...' : 'Seed Test Data'}
+                  {isSeeding ? 'Seeding...' : 'Seed Test Data'}
                 </Button>
                 
                 <Button 
                   onClick={clearTestData}
-                  disabled={isSeeding}
+                  disabled={isSeeding || isClearing}
                   variant="outline"
                   className="border-red-200 text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="h-4 w-4 mr-2" />
-                  Clear Test Data
+                  {isClearing ? 'Clearing...' : 'Clear Test Data'}
                 </Button>
               </div>
 
-              {isSeeding && (
+              {progress > 0 && (
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
                     <span>Progress</span>
@@ -407,7 +384,10 @@ export default function SeedDataPage() {
           {steps.length > 0 && (
             <Card className="border-0 shadow-lg">
               <CardHeader>
-                <CardTitle>Seeding Progress</CardTitle>
+                <CardTitle>Seeding Results</CardTitle>
+                <CardDescription>
+                  Step-by-step progress of the database seeding process
+                </CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -415,37 +395,24 @@ export default function SeedDataPage() {
                     <div key={index} className="border rounded-lg p-4">
                       <div className="flex items-center justify-between mb-2">
                         <h4 className="font-medium text-gray-900">{step.name}</h4>
-                        <div className="flex items-center gap-2">
+                        <Badge className={
+                          step.status === 'success' ? 'bg-green-100 text-green-800' :
+                          step.status === 'error' ? 'bg-red-100 text-red-800' :
+                          step.status === 'running' ? 'bg-blue-100 text-blue-800' :
+                          'bg-gray-100 text-gray-800'
+                        }>
                           {step.status === 'running' && (
-                            <div className="h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                            <div className="h-3 w-3 border border-blue-600 border-t-transparent rounded-full animate-spin mr-1" />
                           )}
-                          {step.status === 'success' && (
-                            <CheckCircle className="h-5 w-5 text-green-600" />
-                          )}
-                          {step.status === 'error' && (
-                            <AlertCircle className="h-5 w-5 text-red-600" />
-                          )}
-                          <span className={`text-sm font-medium ${
-                            step.status === 'success' ? 'text-green-600' :
-                            step.status === 'error' ? 'text-red-600' :
-                            step.status === 'running' ? 'text-blue-600' :
-                            'text-gray-600'
-                          }`}>
-                            {step.status === 'pending' ? 'Pending' : 
-                             step.status === 'running' ? 'Running' :
-                             step.status === 'success' ? 'Success' : 'Error'}
-                          </span>
-                        </div>
+                          {step.status === 'success' && <CheckCircle className="h-3 w-3 mr-1" />}
+                          {step.status === 'error' && <AlertCircle className="h-3 w-3 mr-1" />}
+                          {step.status}
+                        </Badge>
                       </div>
-                      <p className="text-sm text-gray-600">{step.message}</p>
-                      {step.details && (
-                        <details className="mt-2">
-                          <summary className="cursor-pointer text-xs text-gray-500">View Details</summary>
-                          <pre className="mt-2 p-2 bg-gray-50 rounded text-xs overflow-auto">
-                            {JSON.stringify(step.details, null, 2)}
-                          </pre>
-                        </details>
-                      )}
+                      <p className="text-sm text-gray-600">
+                        {step.message}
+                        {step.count && ` (${step.count} items)`}
+                      </p>
                     </div>
                   ))}
                 </div>
@@ -453,25 +420,26 @@ export default function SeedDataPage() {
             </Card>
           )}
 
-          {/* Next Steps */}
-          <Card className="mt-6 border-amber-200 bg-amber-50">
+          {/* Instructions */}
+          <Card className="mt-8 border-amber-200 bg-amber-50">
             <CardHeader>
-              <CardTitle className="text-amber-800">Next Steps</CardTitle>
+              <CardTitle className="text-lg">Next Steps</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-amber-800 space-y-3">
-                <p>After seeding the data successfully:</p>
-                <ol className="list-decimal list-inside space-y-1 text-sm">
-                  <li>Go to the <a href="/discover" className="underline font-medium">Discover page</a> to see the books</li>
-                  <li>Test the search and filter functionality</li>
-                  <li>Click on books to view detailed reviews</li>
-                  <li>Verify all data is displaying correctly</li>
+              <div className="space-y-3">
+                <p className="text-amber-800">
+                  After seeding the data successfully:
+                </p>
+                <ol className="list-decimal pl-6 space-y-2 text-amber-800">
+                  <li>Go to the <a href="/discover" className="underline font-medium">/discover</a> page</li>
+                  <li>Test the search functionality with book titles or authors</li>
+                  <li>Try filtering by genre, language, and minimum score</li>
+                  <li>Test different sorting options</li>
+                  <li>Click on books to view their detailed reviews</li>
                 </ol>
-                <div className="pt-3">
-                  <Button onClick={() => window.location.href = '/discover'} className="bg-amber-600 hover:bg-amber-700">
-                    Go to Discover Page
-                  </Button>
-                </div>
+                <p className="text-amber-700 text-sm mt-4">
+                  <strong>Note:</strong> You need to be logged in with an author or admin role to seed data.
+                </p>
               </div>
             </CardContent>
           </Card>
