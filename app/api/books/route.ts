@@ -18,7 +18,7 @@ export async function GET(request: NextRequest) {
     // Calculate offset for pagination
     const offset = (page - 1) * limit
     
-    // Build the query
+    // Build the base query with proper joins
     let query = supabase
       .from('books')
       .select(`
@@ -30,14 +30,17 @@ export async function GET(request: NextRequest) {
         created_at,
         profiles!books_author_id_fkey(full_name),
         genres(name),
-        ai_reviews(ai_quality_score, view_count),
+        ai_reviews!inner(ai_quality_score, view_count),
         book_purchase_links(platform_name, url)
       `)
       .eq('visibility', 'public')
+      .not('ai_reviews.ai_quality_score', 'is', null) // Only books with completed reviews
     
-    // Apply search filter
+    // Apply search filter if provided
     if (search) {
-      query = query.or(`title.ilike.%${search}%,profiles.full_name.ilike.%${search}%`)
+      // For search, we need to handle it differently since we can't use OR with joins
+      // We'll filter after the query for now, or use a more complex approach
+      query = query.or(`title.ilike.%${search}%`)
     }
     
     // Apply genre filter
@@ -60,15 +63,12 @@ export async function GET(request: NextRequest) {
       case 'title':
         query = query.order('title')
         break
-      case 'author':
-        query = query.order('profiles(full_name)')
-        break
       case 'date':
         query = query.order('created_at', { ascending: false })
         break
       case 'score':
       default:
-        query = query.order('ai_reviews(ai_quality_score)', { ascending: false })
+        query = query.order('ai_reviews.ai_quality_score', { ascending: false })
         break
     }
     
@@ -83,28 +83,43 @@ export async function GET(request: NextRequest) {
     }
     
     // Transform the data to match the expected format
-    const transformedBooks = books?.map(book => ({
-      id: book.id,
-      title: book.title,
-      author: book.profiles?.full_name || 'Unknown Author',
-      genre: book.genres?.name || 'Unknown',
-      score: book.ai_reviews?.[0]?.ai_quality_score || 0,
-      language: book.language,
-      reviewDate: new Date(book.created_at).toLocaleDateString(),
-      views: book.ai_reviews?.[0]?.view_count || 0,
-      cover: book.cover_image_url || '/placeholder.svg?height=300&width=200&text=Book+Cover',
-      summary: book.description || 'No description available.',
-      buyLinks: book.book_purchase_links?.map(link => link.platform_name) || []
-    })) || []
+    const transformedBooks = books?.map(book => {
+      // Handle the case where ai_reviews might be an array or single object
+      const aiReview = Array.isArray(book.ai_reviews) ? book.ai_reviews[0] : book.ai_reviews
+      
+      return {
+        id: book.id,
+        title: book.title,
+        author: book.profiles?.full_name || 'Unknown Author',
+        genre: book.genres?.name || 'Unknown',
+        score: aiReview?.ai_quality_score || 0,
+        language: book.language,
+        reviewDate: new Date(book.created_at).toLocaleDateString(),
+        views: aiReview?.view_count || 0,
+        cover: book.cover_image_url || '/placeholder.svg?height=300&width=200&text=Book+Cover',
+        summary: book.description || 'No description available.',
+        buyLinks: book.book_purchase_links?.map(link => link.platform_name) || []
+      }
+    }) || []
     
-    // Get total count for pagination
+    // Filter by search term if provided (since we couldn't do it in the query)
+    let filteredBooks = transformedBooks
+    if (search) {
+      const searchLower = search.toLowerCase()
+      filteredBooks = transformedBooks.filter(book => 
+        book.title.toLowerCase().includes(searchLower) ||
+        book.author.toLowerCase().includes(searchLower)
+      )
+    }
+    
+    // Get total count for pagination (simplified for now)
     const { count } = await supabase
       .from('books')
       .select('*', { count: 'exact', head: true })
       .eq('visibility', 'public')
     
     return NextResponse.json({
-      books: transformedBooks,
+      books: filteredBooks,
       pagination: {
         page,
         limit,
