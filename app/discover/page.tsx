@@ -1,101 +1,138 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Filter, Star, BookOpen, ExternalLink, Heart, Eye } from "lucide-react"
+import { Search, Filter, Star, BookOpen, ExternalLink, Heart, Eye, ChevronLeft, ChevronRight } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 
-// Mock data for books
-const mockBooks = [
-  {
-    id: 1,
-    title: "The Digital Frontier",
-    author: "Sarah Johnson",
-    genre: "Science Fiction",
-    score: 87,
-    language: "English",
-    reviewDate: "2024-01-15",
-    views: 234,
-    cover: "/placeholder.svg?height=300&width=200&text=The+Digital+Frontier",
-    summary: "A thrilling journey through virtual worlds where reality and digital existence blur.",
-    buyLinks: ["Amazon", "Barnes & Noble"],
-  },
-  {
-    id: 2,
-    title: "Love in the Time of AI",
-    author: "Michael Chen",
-    genre: "Romance",
-    score: 92,
-    language: "English",
-    reviewDate: "2024-01-10",
-    views: 456,
-    cover: "/placeholder.svg?height=300&width=200&text=Love+in+the+Time+of+AI",
-    summary: "A heartwarming story about finding love in an increasingly digital world.",
-    buyLinks: ["Amazon", "Apple Books"],
-  },
-  {
-    id: 3,
-    title: "Shadows of Tomorrow",
-    author: "Emma Rodriguez",
-    genre: "Mystery",
-    score: 78,
-    language: "English",
-    reviewDate: "2024-01-05",
-    views: 189,
-    cover: "/placeholder.svg?height=300&width=200&text=Shadows+of+Tomorrow",
-    summary: "A gripping mystery that keeps readers guessing until the very last page.",
-    buyLinks: ["Amazon", "Kobo"],
-  },
-  {
-    id: 4,
-    title: "The Quantum Garden",
-    author: "David Park",
-    genre: "Science Fiction",
-    score: 95,
-    language: "English",
-    reviewDate: "2024-01-01",
-    views: 678,
-    cover: "/placeholder.svg?height=300&width=200&text=The+Quantum+Garden",
-    summary: "An epic tale of quantum physics and parallel universes colliding.",
-    buyLinks: ["Amazon", "Google Books"],
-  },
-]
+interface Book {
+  id: string
+  title: string
+  author: string
+  genre: string
+  score: number
+  language: string
+  reviewDate: string
+  views: number
+  cover: string
+  summary: string
+  buyLinks: string[]
+}
+
+interface Genre {
+  id: number
+  name: string
+}
+
+interface PaginationInfo {
+  page: number
+  limit: number
+  total: number
+  totalPages: number
+}
 
 export default function DiscoverPage() {
+  const [books, setBooks] = useState<Book[]>([])
+  const [genres, setGenres] = useState<Genre[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [pagination, setPagination] = useState<PaginationInfo>({
+    page: 1,
+    limit: 12,
+    total: 0,
+    totalPages: 0
+  })
+
+  // Filter states
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedGenre, setSelectedGenre] = useState("all")
   const [selectedLanguage, setSelectedLanguage] = useState("all")
   const [minScore, setMinScore] = useState("0")
   const [sortBy, setSortBy] = useState("score")
 
-  const filteredBooks = mockBooks
-    .filter(
-      (book) =>
-        book.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchTerm.toLowerCase()),
-    )
-    .filter((book) => selectedGenre === "all" || book.genre.toLowerCase() === selectedGenre)
-    .filter((book) => selectedLanguage === "all" || book.language.toLowerCase() === selectedLanguage)
-    .filter((book) => book.score >= Number.parseInt(minScore))
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "score":
-          return b.score - a.score
-        case "title":
-          return a.title.localeCompare(b.title)
-        case "author":
-          return a.author.localeCompare(b.author)
-        case "date":
-          return new Date(b.reviewDate).getTime() - new Date(a.reviewDate).getTime()
-        default:
-          return 0
-      }
-    })
+  // Fetch genres on component mount
+  useEffect(() => {
+    fetchGenres()
+  }, [])
+
+  // Fetch books when filters change
+  useEffect(() => {
+    fetchBooks()
+  }, [searchTerm, selectedGenre, selectedLanguage, minScore, sortBy, pagination.page])
+
+  const fetchGenres = async () => {
+    try {
+      const response = await fetch('/api/genres')
+      if (!response.ok) throw new Error('Failed to fetch genres')
+      const genresData = await response.json()
+      setGenres(genresData)
+    } catch (error) {
+      console.error('Error fetching genres:', error)
+    }
+  }
+
+  const fetchBooks = async () => {
+    try {
+      setLoading(true)
+      setError(null)
+
+      const params = new URLSearchParams({
+        search: searchTerm,
+        genre: selectedGenre,
+        language: selectedLanguage,
+        minScore: minScore,
+        sortBy: sortBy,
+        page: pagination.page.toString(),
+        limit: pagination.limit.toString()
+      })
+
+      const response = await fetch(`/api/books?${params}`)
+      if (!response.ok) throw new Error('Failed to fetch books')
+      
+      const data = await response.json()
+      setBooks(data.books || [])
+      setPagination(data.pagination || pagination)
+    } catch (error) {
+      console.error('Error fetching books:', error)
+      setError('Failed to load books. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, page: newPage }))
+  }
+
+  const handleFilterChange = () => {
+    setPagination(prev => ({ ...prev, page: 1 })) // Reset to first page when filters change
+  }
+
+  // Loading skeleton component
+  const BookSkeleton = () => (
+    <Card className="border-0 shadow-lg">
+      <CardContent className="p-0">
+        <div className="animate-pulse">
+          <div className="w-full h-64 bg-gray-200 rounded-t-lg"></div>
+          <div className="p-4 space-y-3">
+            <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+            <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+            <div className="h-3 bg-gray-200 rounded w-full"></div>
+            <div className="h-3 bg-gray-200 rounded w-full"></div>
+            <div className="flex gap-2">
+              <div className="h-6 bg-gray-200 rounded w-16"></div>
+              <div className="h-6 bg-gray-200 rounded w-16"></div>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  )
 
   return (
     <div className="min-h-screen bg-white">
@@ -151,27 +188,36 @@ export default function DiscoverPage() {
                   <Input
                     placeholder="Search books or authors..."
                     value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onChange={(e) => {
+                      setSearchTerm(e.target.value)
+                      handleFilterChange()
+                    }}
                     className="pl-10 border-gray-200 focus:border-amber-500 focus:ring-amber-500"
                   />
                 </div>
               </div>
 
-              <Select value={selectedGenre} onValueChange={setSelectedGenre}>
+              <Select value={selectedGenre} onValueChange={(value) => {
+                setSelectedGenre(value)
+                handleFilterChange()
+              }}>
                 <SelectTrigger className="border-gray-200 focus:border-amber-500 focus:ring-amber-500">
                   <SelectValue placeholder="Genre" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="all">All Genres</SelectItem>
-                  <SelectItem value="science fiction">Science Fiction</SelectItem>
-                  <SelectItem value="romance">Romance</SelectItem>
-                  <SelectItem value="mystery">Mystery</SelectItem>
-                  <SelectItem value="fantasy">Fantasy</SelectItem>
-                  <SelectItem value="non-fiction">Non-Fiction</SelectItem>
+                  {genres.map((genre) => (
+                    <SelectItem key={genre.id} value={genre.name}>
+                      {genre.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
 
-              <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+              <Select value={selectedLanguage} onValueChange={(value) => {
+                setSelectedLanguage(value)
+                handleFilterChange()
+              }}>
                 <SelectTrigger className="border-gray-200 focus:border-amber-500 focus:ring-amber-500">
                   <SelectValue placeholder="Language" />
                 </SelectTrigger>
@@ -183,7 +229,10 @@ export default function DiscoverPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={minScore} onValueChange={setMinScore}>
+              <Select value={minScore} onValueChange={(value) => {
+                setMinScore(value)
+                handleFilterChange()
+              }}>
                 <SelectTrigger className="border-gray-200 focus:border-amber-500 focus:ring-amber-500">
                   <SelectValue placeholder="Min Score" />
                 </SelectTrigger>
@@ -195,7 +244,10 @@ export default function DiscoverPage() {
                 </SelectContent>
               </Select>
 
-              <Select value={sortBy} onValueChange={setSortBy}>
+              <Select value={sortBy} onValueChange={(value) => {
+                setSortBy(value)
+                handleFilterChange()
+              }}>
                 <SelectTrigger className="border-gray-200 focus:border-amber-500 focus:ring-amber-500">
                   <SelectValue placeholder="Sort by" />
                 </SelectTrigger>
@@ -210,99 +262,181 @@ export default function DiscoverPage() {
           </CardContent>
         </Card>
 
+        {/* Error State */}
+        {error && (
+          <Card className="mb-8 border-red-200 bg-red-50">
+            <CardContent className="p-6 text-center">
+              <p className="text-red-800">{error}</p>
+              <Button 
+                onClick={fetchBooks} 
+                className="mt-4 bg-red-600 hover:bg-red-700"
+              >
+                Try Again
+              </Button>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Results */}
         <div className="mb-6 flex justify-between items-center">
           <p className="text-gray-600 text-lg">
-            Showing <span className="font-semibold text-gray-900">{filteredBooks.length}</span> quality books
+            {loading ? (
+              'Loading books...'
+            ) : (
+              <>
+                Showing <span className="font-semibold text-gray-900">{books.length}</span> of{' '}
+                <span className="font-semibold text-gray-900">{pagination.total}</span> quality books
+              </>
+            )}
           </p>
         </div>
 
         {/* Book Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredBooks.map((book) => (
-            <Card key={book.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
-              <CardContent className="p-0">
-                <div className="relative">
-                  <Image
-                    src={book.cover || "/placeholder.svg?height=300&width=200&text=Book+Cover"}
-                    alt={book.title}
-                    width={200}
-                    height={300}
-                    className="w-full h-64 object-cover rounded-t-lg"
-                    onError={(e) => {
-                      e.currentTarget.src = "/placeholder.svg?height=300&width=200&text=Book+Cover"
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
+          {loading ? (
+            // Show loading skeletons
+            Array.from({ length: 8 }).map((_, index) => (
+              <BookSkeleton key={index} />
+            ))
+          ) : books.length === 0 ? (
+            // No books found
+            <div className="col-span-full">
+              <Card className="text-center py-16 border-0 shadow-lg">
+                <CardContent>
+                  <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                  <h3 className="text-xl font-medium mb-2 text-gray-900">No books found</h3>
+                  <p className="text-gray-600 mb-6">Try adjusting your search criteria or browse all books.</p>
+                  <Button 
+                    variant="outline" 
+                    className="border-amber-600 text-amber-700 hover:bg-amber-50"
+                    onClick={() => {
+                      setSearchTerm("")
+                      setSelectedGenre("all")
+                      setSelectedLanguage("all")
+                      setMinScore("0")
+                      handleFilterChange()
                     }}
-                  />
-                  <div className="absolute top-3 right-3">
-                    <Badge className="bg-amber-600 hover:bg-amber-700 text-white font-bold">
-                      <Star className="h-3 w-3 mr-1" />
-                      {book.score}
-                    </Badge>
-                  </div>
-                </div>
-
-                <div className="p-4">
-                  <h3 className="font-bold text-lg mb-1 line-clamp-2 text-gray-900">{book.title}</h3>
-                  <p className="text-gray-600 mb-3">by {book.author}</p>
-
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge variant="outline" className="border-amber-200 text-amber-700">
-                      {book.genre}
-                    </Badge>
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Eye className="h-3 w-3 mr-1" />
-                      {book.views}
+                  >
+                    Clear Filters
+                  </Button>
+                </CardContent>
+              </Card>
+            </div>
+          ) : (
+            // Show books
+            books.map((book) => (
+              <Card key={book.id} className="border-0 shadow-lg hover:shadow-xl transition-shadow">
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <Image
+                      src={book.cover}
+                      alt={book.title}
+                      width={200}
+                      height={300}
+                      className="w-full h-64 object-cover rounded-t-lg"
+                      onError={(e) => {
+                        e.currentTarget.src = "/placeholder.svg?height=300&width=200&text=Book+Cover"
+                      }}
+                    />
+                    <div className="absolute top-3 right-3">
+                      <Badge className="bg-amber-600 hover:bg-amber-700 text-white font-bold">
+                        <Star className="h-3 w-3 mr-1" />
+                        {book.score}
+                      </Badge>
                     </div>
                   </div>
 
-                  <p className="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">{book.summary}</p>
+                  <div className="p-4">
+                    <h3 className="font-bold text-lg mb-1 line-clamp-2 text-gray-900">{book.title}</h3>
+                    <p className="text-gray-600 mb-3">by {book.author}</p>
 
-                  <div className="space-y-3">
-                    <div className="flex flex-wrap gap-1">
-                      {book.buyLinks.map((link) => (
+                    <div className="flex items-center gap-2 mb-3">
+                      <Badge variant="outline" className="border-amber-200 text-amber-700">
+                        {book.genre}
+                      </Badge>
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Eye className="h-3 w-3 mr-1" />
+                        {book.views}
+                      </div>
+                    </div>
+
+                    <p className="text-sm text-gray-700 mb-4 line-clamp-3 leading-relaxed">{book.summary}</p>
+
+                    <div className="space-y-3">
+                      <div className="flex flex-wrap gap-1">
+                        {book.buyLinks.map((link) => (
+                          <Button
+                            key={link}
+                            variant="outline"
+                            size="sm"
+                            className="text-xs border-amber-200 text-amber-700 hover:bg-amber-50"
+                          >
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            {link}
+                          </Button>
+                        ))}
+                      </div>
+
+                      <div className="flex justify-between items-center">
                         <Button
-                          key={link}
-                          variant="outline"
+                          variant="ghost"
                           size="sm"
-                          className="text-xs border-amber-200 text-amber-700 hover:bg-amber-50"
+                          className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
                         >
-                          <ExternalLink className="h-3 w-3 mr-1" />
-                          {link}
+                          <Heart className="h-4 w-4 mr-1" />
+                          Save
                         </Button>
-                      ))}
-                    </div>
-
-                    <div className="flex justify-between items-center">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="text-amber-600 hover:text-amber-700 hover:bg-amber-50"
-                      >
-                        <Heart className="h-4 w-4 mr-1" />
-                        Save
-                      </Button>
-                      <Button size="sm" className="bg-amber-600 hover:bg-amber-700" asChild>
-                        <Link href={`/book/${book.id}`}>View Review</Link>
-                      </Button>
+                        <Button size="sm" className="bg-amber-600 hover:bg-amber-700" asChild>
+                          <Link href={`/book/${book.id}`}>View Review</Link>
+                        </Button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                </CardContent>
+              </Card>
+            ))
+          )}
         </div>
 
-        {filteredBooks.length === 0 && (
-          <Card className="text-center py-16 border-0 shadow-lg">
-            <CardContent>
-              <BookOpen className="h-16 w-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-medium mb-2 text-gray-900">No books found</h3>
-              <p className="text-gray-600 mb-6">Try adjusting your search criteria or browse all books.</p>
-              <Button variant="outline" className="border-amber-600 text-amber-700 hover:bg-amber-50">
-                Clear Filters
-              </Button>
-            </CardContent>
-          </Card>
+        {/* Pagination */}
+        {!loading && pagination.totalPages > 1 && (
+          <div className="flex justify-center items-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={() => handlePageChange(pagination.page - 1)}
+              disabled={pagination.page <= 1}
+              className="border-amber-200 text-amber-700 hover:bg-amber-50"
+            >
+              <ChevronLeft className="h-4 w-4 mr-1" />
+              Previous
+            </Button>
+            
+            <div className="flex items-center space-x-2">
+              {Array.from({ length: Math.min(5, pagination.totalPages) }, (_, i) => {
+                const pageNum = i + 1
+                return (
+                  <Button
+                    key={pageNum}
+                    variant={pagination.page === pageNum ? "default" : "outline"}
+                    onClick={() => handlePageChange(pageNum)}
+                    className={pagination.page === pageNum ? "bg-amber-600 hover:bg-amber-700" : "border-amber-200 text-amber-700 hover:bg-amber-50"}
+                  >
+                    {pageNum}
+                  </Button>
+                )
+              })}
+            </div>
+            
+            <Button
+              variant="outline"
+              onClick={() => handlePageChange(pagination.page + 1)}
+              disabled={pagination.page >= pagination.totalPages}
+              className="border-amber-200 text-amber-700 hover:bg-amber-50"
+            >
+              Next
+              <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          </div>
         )}
       </div>
 
