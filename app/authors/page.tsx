@@ -309,7 +309,7 @@ export default function AuthorPortalPage() {
             Join thousands of authors who trust AI-powered analysis to improve their craft
           </p>
           <Button size="lg" className="bg-amber-600 hover:bg-amber-700 text-lg px-8 py-3" asChild>
-            <Link href="/register">Start Your First Review</Link>
+            <Link href="/upload">Start Your First Review</Link>
           </Button>
         </div>
       </section>
